@@ -95,6 +95,24 @@ int do_load_config(json_t *root)
         printf("read broadcast_limit fail: %d\n", ret);
         return -__LINE__;
     }
+
+    //for peer list get
+    ret = read_cfg_str(root, "peer_country", &settings.peer_country, NULL);
+    if (ret < 0) {
+        printf("read peer_country fail: %d\n", ret);
+        return -__LINE__;
+    }
+    ret = read_cfg_str(root, "peer_city", &settings.peer_city, NULL);
+    if (ret < 0) {
+        printf("read peer_city fail: %d\n", ret);
+        return -__LINE__;
+    }
+    ret = read_cfg_str(root, "peer_list_url", &settings.peer_list_url, NULL);
+    if (ret < 0) {
+        printf("read peer_list_url fail: %d\n", ret);
+        return -__LINE__;
+    }
+
     char *start_string = NULL;
     ret = read_cfg_str(root, "start_string", &start_string, NULL);
     if (ret < 0) {

@@ -39,6 +39,9 @@ struct settings {
     char                *peer_config_path;
     int                 reconnect_timeout;
     int                 broadcast_limit;
+    char                *peer_country;
+    char                *peer_city;
+    char                *peer_list_url;
     sds                 start_string;
 
     char                *request_auth;
