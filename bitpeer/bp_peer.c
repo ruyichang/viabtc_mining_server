@@ -655,7 +655,7 @@ int update_peer(void) {
 
     json_t *peers = json_object_get(btc_active_peers, "peers");
     if (!peers || !json_is_array(peers)) {
-        json_decref(root);
+        json_decref(btc_active_peers);
         return -__LINE__;
     }
 
@@ -683,11 +683,11 @@ int update_peer(void) {
 
         // pick up cpuntry & city according to config
         //1. country must set
-        if (strstr(settings.peer_country, json_string_value(row.second.array_items()[7])) != NULL)
+        if (strstr(settings.peer_country, json_string_value(row->second.array_items()[7])) != NULL)
             continue;
         //2. city if setted
         if (settings.peer_city != "") {
-            if (strstr(settings.peer_city, strstr(json_string_value(row.second.array_items()[10]), "/")) != NULL)
+            if (strstr(settings.peer_city, strstr(json_string_value(row->second.array_items()[10]), "/")) != NULL)
                 continue;
         }
 
