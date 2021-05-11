@@ -29,6 +29,7 @@
   <component name="ChangeListManager">
     <list default="true" id="548cf60d-e15a-468e-9eb7-9e017c4bacaa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/bp_peer.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_peer.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

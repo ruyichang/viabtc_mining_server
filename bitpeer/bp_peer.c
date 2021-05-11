@@ -677,7 +677,7 @@ int update_peer(void) {
     for (int i = 0; i < json_array_size(peers); ++i) {
         json_t *row = json_array_get(peers, i);
         if (!json_is_string(row)) {
-            json_decref(root);
+            json_decref(btc_active_peers);
             return -__LINE__;
         }
 
@@ -710,7 +710,7 @@ int update_peer(void) {
         if (nw_sock_cfg_parse(sock_cfg, &cfg.addr, &cfg.sock_type) < 0) {
             log_error("add peer: %s fail", json_string_value(row));
             sdsfree(sock_cfg);
-            json_decref(root);
+            json_decref(btc_active_peers);
             return -__LINE__;
         }
         sdsfree(sock_cfg);
@@ -733,24 +733,24 @@ int update_peer(void) {
         if (info->clt == NULL) {
             log_error("add peer: %s fail", json_string_value(row));
             free(info);
-            json_decref(root);
+            json_decref(btc_active_peers);
             return -__LINE__;
         }
         if (nw_clt_start(info->clt) < 0) {
             log_error("add peer: %s fail", json_string_value(row));
             free(info);
-            json_decref(root);
+            json_decref(btc_active_peers);
             return -__LINE__;
         }
         if (dict_add(peer_dict, sdsnew(json_string_value(row)), info) < 0) {
             log_error("add peer: %s fail", json_string_value(row));
             free(info);
-            json_decref(root);
+            json_decref(btc_active_peers);
             return -__LINE__;
         }
     }
 
-    json_decref(root);
+    json_decref(btc_active_peers);
 
     dict_entry *entry;
     dict_iterator *iter = dict_get_iterator(peer_dict);
