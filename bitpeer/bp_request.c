@@ -17,36 +17,50 @@ static size_t write_callback_func(char *ptr, size_t size, size_t nmemb, void *us
 }
 
 json_t* get_peer_list(const char *url){
-    double timeout = 10;
-
+    double timeout = 10*2;
     json_t *reply  = NULL;
-    json_t *result = NULL;
+//    json_t *result = NULL;
 
-    CURL *curl = curl_easy_init();
+
+    struct curl_slist *headers = NULL;
+    CURLcode status;
+    long code;
     sds reply_str = sdsempty();
 
-    char auth[100];
-    snprintf(auth, sizeof(auth), "%s: %s", "AUTHORIZATION", settings.request_auth);
-    struct curl_slist *chunk = NULL;
-    chunk = curl_slist_append(chunk, auth);
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+    CURL *curl = curl_easy_init();
+
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_TRY);
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl");
+    // curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, timeout); //ms not effect
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_func);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &reply_str);
-    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, (long)(timeout * 1000));
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
-    CURLcode ret = curl_easy_perform(curl);
-    if (ret != CURLE_OK) {
-        log_fatal("get %s fail: %s", url, curl_easy_strerror(ret));
+    status = curl_easy_perform(curl);
+    if (status != 0) {
+        printf("#################status:%d\n",status);
+
+//        std::cout << "unable to request data from: " << url << ", error: " << curl_easy_strerror(status);
         goto cleanup;
     }
+
+//    printf("#################reply_str:%s \n",reply_str);
 
     reply = json_loads(reply_str, 0, NULL);
     if (reply == NULL) {
         log_fatal("parse %s reply fail: %s", url, reply_str);
         goto cleanup;
     }
+    json_incref(reply);
+    printf("#################reply:%s \n",reply);
+    printf("#################reply:%s \n",json_string_value(reply));
+
 
     json_t *error;
     error = json_object_get(reply, "error");
@@ -61,17 +75,13 @@ json_t* get_peer_list(const char *url){
         goto cleanup;
     }
 
-    result = json_object_get(reply, "result");
-    json_incref(result);
 
-    cleanup:
-    curl_easy_cleanup(curl);
+cleanup:
+    if (curl) curl_easy_cleanup(curl);
+    if (headers) curl_slist_free_all(headers);
     sdsfree(reply_str);
-    if (reply)
-        json_decref(reply);
-    curl_slist_free_all(chunk);
 
-    return result;
+    return reply;
 }
 
 static json_t *http_request(const char *url, double timeout)
@@ -154,12 +164,18 @@ static void on_job_cleanup(nw_job_entry *entry)
 
 int init_jobmaster_config(void)
 {
-    json_t *data = http_request(settings.jobmaster_url, 2.0);
-    if (data == NULL)
-        return -__LINE__;
-    if (settings.jobmaster_cfg)
-        json_decref(settings.jobmaster_cfg);
-    settings.jobmaster_cfg = data;
+//    json_t *data = http_request(settings.jobmaster_url, 2.0);
+//    if (data == NULL)
+//        return -__LINE__;
+//    if (settings.jobmaster_cfg)
+//        json_decref(settings.jobmaster_cfg);
+//    settings.jobmaster_cfg = data;
+//    return 0;
+
+    json_t *message = json_array();
+    json_array_set_new(message, 1, json_string("{[127.0.0.1:6000]}"));
+    settings.jobmaster_cfg = message;
+
     return 0;
 }
 

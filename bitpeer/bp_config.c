@@ -151,6 +151,7 @@ int load_config(const char *path)
         return ret;
     }
     json_decref(root);
+    printf("load_config done!\n");
 
     return 0;
 }

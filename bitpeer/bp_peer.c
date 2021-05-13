@@ -650,8 +650,16 @@ int update_peer(void) {
     time_t now = time(NULL);
     json_error_t error;
 
+    printf("-------update_peer->settings.peer_list_url:%s\n",settings.peer_list_url);
+
+
     // get peers list directly via http
     json_t *btc_active_peers = get_peer_list(settings.peer_list_url);
+
+    printf("-----1--update_peer->btc_active_peers %s\n",btc_active_peers);
+
+    printf("-------update_peer->btc_active_peers %s\n",json_string_value(btc_active_peers));
+
 
     json_t *peers = json_object_get(btc_active_peers, "nodes");
     if (!peers || !json_is_object(peers)) {
@@ -885,7 +893,12 @@ int init_peer(void) {
     clt_buf_pool = nw_buf_pool_create(max_pkg_size);
     if (clt_buf_pool == NULL)
         return -__LINE__;
+
+    printf("-------init_peer->init_coin done.---------\n");
+
     ERR_RET(update_peer());
+
+    printf("-------init_peer->update_peer done.---------\n");
 
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sockfd < 0)

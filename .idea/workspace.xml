@@ -28,12 +28,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="548cf60d-e15a-468e-9eb7-9e017c4bacaa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/jobmaster/.idea/jobmaster.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bitpeer/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/bp_config.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_config.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_peer.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_peer.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_request.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_request.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bitpeer/bp_request.h" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_request.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bitpeer/makefile" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/config.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +71,8 @@
       <workItem from="1620444050786" duration="1830000" />
       <workItem from="1620702909779" duration="949000" />
       <workItem from="1620721639870" duration="2125000" />
-      <workItem from="1620874974486" duration="1990000" />
+      <workItem from="1620874974486" duration="2358000" />
+      <workItem from="1620892306953" duration="2870000" />
     </task>
     <servers />
   </component>
@@ -95,9 +96,9 @@
       <screen x="0" y="23" width="3440" height="1417" />
     </state>
     <state x="2074" y="370" key="SettingsEditor/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620789079235" />
-    <state x="1358" y="373" width="586" height="490" key="find.popup" timestamp="1620878838457">
+    <state x="591" y="394" width="586" height="490" key="find.popup" timestamp="1620896117739">
       <screen x="0" y="23" width="3440" height="1417" />
     </state>
-    <state x="1358" y="373" width="586" height="490" key="find.popup/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620878838457" />
+    <state x="591" y="394" width="586" height="490" key="find.popup/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620896117739" />
   </component>
 </project>
