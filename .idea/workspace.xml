@@ -29,7 +29,11 @@
   <component name="ChangeListManager">
     <list default="true" id="548cf60d-e15a-468e-9eb7-9e017c4bacaa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_peer.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_peer.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/bp_request.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_request.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/bp_request.h" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_request.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/makefile" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/Makefile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +58,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="cf.first.check.clang-format" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -65,7 +70,8 @@
       <updated>1620444049580</updated>
       <workItem from="1620444050786" duration="1830000" />
       <workItem from="1620702909779" duration="949000" />
-      <workItem from="1620721639870" duration="1675000" />
+      <workItem from="1620721639870" duration="2125000" />
+      <workItem from="1620874974486" duration="1990000" />
     </task>
     <servers />
   </component>
@@ -82,11 +88,16 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1358" y="373" width="586" height="490" key="find.popup" timestamp="1620725513065">
+    <state x="2074" y="370" key="SettingsEditor" timestamp="1620789079235">
       <screen x="0" y="23" width="3440" height="1417" />
     </state>
-    <state x="1358" y="373" width="586" height="490" key="find.popup/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620725513065" />
+    <state x="2074" y="370" key="SettingsEditor/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620789079235" />
+    <state x="1358" y="373" width="586" height="490" key="find.popup" timestamp="1620878838457">
+      <screen x="0" y="23" width="3440" height="1417" />
+    </state>
+    <state x="1358" y="373" width="586" height="490" key="find.popup/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620878838457" />
   </component>
 </project>

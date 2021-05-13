@@ -16,6 +16,64 @@ static size_t write_callback_func(char *ptr, size_t size, size_t nmemb, void *us
     return size * nmemb;
 }
 
+json_t* get_peer_list(const char *url){
+    double timeout = 10;
+
+    json_t *reply  = NULL;
+    json_t *result = NULL;
+
+    CURL *curl = curl_easy_init();
+    sds reply_str = sdsempty();
+
+    char auth[100];
+    snprintf(auth, sizeof(auth), "%s: %s", "AUTHORIZATION", settings.request_auth);
+    struct curl_slist *chunk = NULL;
+    chunk = curl_slist_append(chunk, auth);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_func);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &reply_str);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, (long)(timeout * 1000));
+
+    CURLcode ret = curl_easy_perform(curl);
+    if (ret != CURLE_OK) {
+        log_fatal("get %s fail: %s", url, curl_easy_strerror(ret));
+        goto cleanup;
+    }
+
+    reply = json_loads(reply_str, 0, NULL);
+    if (reply == NULL) {
+        log_fatal("parse %s reply fail: %s", url, reply_str);
+        goto cleanup;
+    }
+
+    json_t *error;
+    error = json_object_get(reply, "error");
+    if (!error) {
+        log_fatal("reply error: %s: %s", url, reply_str);
+        goto cleanup;
+    }
+
+    json_t *message = json_object_get(error, "message");
+    if (!message || strcmp(json_string_value(message), "ok") != 0) {
+        log_fatal("reply error: %s: %s", url, reply_str);
+        goto cleanup;
+    }
+
+    result = json_object_get(reply, "result");
+    json_incref(result);
+
+    cleanup:
+    curl_easy_cleanup(curl);
+    sdsfree(reply_str);
+    if (reply)
+        json_decref(reply);
+    curl_slist_free_all(chunk);
+
+    return result;
+}
+
 static json_t *http_request(const char *url, double timeout)
 {
     json_t *reply  = NULL;

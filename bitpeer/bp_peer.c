@@ -651,11 +651,11 @@ int update_peer(void) {
     json_error_t error;
 
     // get peers list directly via http
-    json_t *btc_active_peers = http_request(settings.peer_list_url, 10.0 /*time out seconds*/);
+    json_t *btc_active_peers = get_peer_list(settings.peer_list_url);
 
-    json_t *peers = json_object_get(btc_active_peers, "peers");
-    if (!peers || !json_is_array(peers)) {
-        json_decref(btc_active_peers);
+    json_t *peers = json_object_get(btc_active_peers, "nodes");
+    if (!peers || !json_is_object(peers)) {
+        json_decref(peers);
         return -__LINE__;
     }
 
@@ -674,24 +674,31 @@ int update_peer(void) {
     [11]: AS12946
     [12]: R Cable y Telecable Telecomunicaciones, S.A.U.*/
 
-    for (int i = 0; i < json_array_size(peers); ++i) {
-        json_t *row = json_array_get(peers, i);
-        if (!json_is_string(row)) {
-            json_decref(btc_active_peers);
-            return -__LINE__;
-        }
+    // check result of all
+    void *iter;
+    json_t *iter_values;
 
-        // pick up cpuntry & city according to config
-        //1. country must set
-        if (strstr(settings.peer_country, json_string_value(row->second.array_items()[7])) != NULL)
+    iter = json_object_iter(peers);
+
+    while (true) {
+        iter_values = json_object_iter_value(iter);
+
+        if (!json_is_array(iter_values)) {
             continue;
-        //2. city if setted
-        if (settings.peer_city != "") {
-            if (strstr(settings.peer_city, strstr(json_string_value(row->second.array_items()[10]), "/")) != NULL)
-                continue;
         }
 
-        sds key = sdsnew(json_string_value(row));
+        //country
+        json_t *country = json_array_get(iter_values, 7);
+        if (!json_is_string(country) &&
+        json_string_value(iter_values) == "" &&
+        strstr(settings.peer_country, json_string_value(iter_values)) == NULL) {
+            continue;
+        }
+
+        //city
+        /*test  */
+
+        sds key = sdsnew(json_string_value(json_object_iter_key(iter)));
         dict_entry *entry = dict_find(peer_dict, key);
         if (entry) {
             struct peer_info *info = entry->val;
@@ -702,15 +709,15 @@ int update_peer(void) {
         }
         sdsfree(key);
 
-        log_debug("add peer: %s", json_string_value(row));
+        log_debug("add peer: %s", json_string_value(json_object_iter_key(iter)));
         nw_clt_cfg cfg;
         memset(&cfg, 0, sizeof(cfg));
         sds sock_cfg = sdsempty();
-        sock_cfg = sdscatprintf(sock_cfg, "tcp@%s", json_string_value(row));
+        sock_cfg = sdscatprintf(sock_cfg, "tcp@%s", json_string_value(json_object_iter_key(iter)));
         if (nw_sock_cfg_parse(sock_cfg, &cfg.addr, &cfg.sock_type) < 0) {
-            log_error("add peer: %s fail", json_string_value(row));
+            log_error("add peer: %s fail", json_string_value(json_object_iter_key(iter)));
             sdsfree(sock_cfg);
-            json_decref(btc_active_peers);
+            json_decref(peers);
             return -__LINE__;
         }
         sdsfree(sock_cfg);
@@ -731,37 +738,43 @@ int update_peer(void) {
         info->update_time = now;
         info->clt = nw_clt_create(&cfg, &type, info);
         if (info->clt == NULL) {
-            log_error("add peer: %s fail", json_string_value(row));
+            log_error("add peer: %s fail", json_string_value(json_object_iter_key(iter)));
             free(info);
-            json_decref(btc_active_peers);
+            json_decref(peers);
             return -__LINE__;
         }
         if (nw_clt_start(info->clt) < 0) {
-            log_error("add peer: %s fail", json_string_value(row));
+            log_error("add peer: %s fail", json_string_value(json_object_iter_key(iter)));
             free(info);
-            json_decref(btc_active_peers);
+            json_decref(peers);
             return -__LINE__;
         }
-        if (dict_add(peer_dict, sdsnew(json_string_value(row)), info) < 0) {
-            log_error("add peer: %s fail", json_string_value(row));
+        if (dict_add(peer_dict, sdsnew(json_string_value(json_object_iter_key(iter))), info) < 0) {
+            log_error("add peer: %s fail", json_string_value(json_object_iter_key(iter)));
             free(info);
-            json_decref(btc_active_peers);
+            json_decref(peers);
             return -__LINE__;
+        }
+
+        if ((iter = json_object_iter_next(peers, iter)) == NULL) {
+            //printf("iterate end");
+            break;
         }
     }
 
+    json_decref(peers);
     json_decref(btc_active_peers);
 
     dict_entry *entry;
-    dict_iterator *iter = dict_get_iterator(peer_dict);
-    while ((entry = dict_next(iter)) != NULL) {
+    dict_iterator *iter_dict = dict_get_iterator(peer_dict);
+    while ((entry = dict_next(iter_dict)) != NULL) {
         struct peer_info *info = entry->val;
         if (info->update_time != now) {
             log_debug("remove peer: %s", (sds) entry->key);
             dict_delete(peer_dict, entry->key);
         }
     }
-    dict_release_iterator(iter);
+    dict_release_iterator(iter_dict);
 
     return 0;
 }
