@@ -302,6 +302,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
     json_decref(message);
     log_debug("block notify msg: %s", message_data);
     printf("----------------block notify msg: %s\n", message_data);
+    log_error("----------------block notify msg: %s", message_data);
 
     rpc_pkg pkg;
     memset(&pkg, 0, sizeof(pkg));
@@ -324,6 +325,8 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
         sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *)addr, sizeof(*addr));
     }
+
+    log_error("----------------block notify pkg_data: %s", pkg_data);
 
     memcpy(last_hash, hash, sizeof(hash));
 
