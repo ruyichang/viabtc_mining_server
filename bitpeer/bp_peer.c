@@ -286,12 +286,18 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
         memcpy(last_hash, hash, sizeof(hash));
         return -__LINE__;
     }
+    log_error("----------------last_hash: %s", last_hash);
+
+    char hash_r[32];
+    memcpy(hash_r, last_hash, 32);
+    reverse_mem(hash_r, sizeof(hash_r));
+    sds hex = bin2hex(hash_r, 32);
 
     json_t *message = json_object();
     json_object_set_new(message, "height", json_integer(height));
     json_object_set_new(message, "curtime", json_integer(curtime));
     json_object_set_new(message, "hash", json_string(hash));
-    json_object_set_new(message, "prevhash", json_string(last_hash));
+    json_object_set_new(message, "prevhash", json_string(hex));
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
@@ -301,7 +307,6 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
     }
     json_decref(message);
     log_debug("block notify msg: %s", message_data);
-    printf("----------------block notify msg: %s\n", message_data);
     log_error("----------------block notify msg: %s", message_data);
 
     rpc_pkg pkg;
@@ -327,9 +332,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
     }
 
     log_error("----------------block notify pkg_data: %s", pkg_data);
-
-    memcpy(last_hash, hash, sizeof(hash));
-
+    
     return 0;
 }
 
