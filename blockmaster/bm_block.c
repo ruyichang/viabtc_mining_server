@@ -189,6 +189,7 @@ static int broadcast_peer_block(void *data, size_t size, uint32_t cmd)
     return 0;
 }
 
+//1
 static int broadcast_thin_block(void *data, size_t size, uint32_t cmd)
 {
     char block_hash[32];

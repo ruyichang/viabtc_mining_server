@@ -19,7 +19,7 @@ static size_t write_callback_func(char *ptr, size_t size, size_t nmemb, void *us
 json_t* get_peer_list(const char *url){
     double timeout = 10*2;
     json_t *reply  = NULL;
-//    json_t *result = NULL;
+    json_t *result = NULL;
 
 
     struct curl_slist *headers = NULL;
@@ -44,23 +44,22 @@ json_t* get_peer_list(const char *url){
 
     status = curl_easy_perform(curl);
     if (status != 0) {
-        printf("#################status:%d\n",status);
-
-//        std::cout << "unable to request data from: " << url << ", error: " << curl_easy_strerror(status);
+        printf("unable to request data from: %s, error: %s \n", url, curl_easy_strerror(status));
         goto cleanup;
     }
 
-//    printf("#################reply_str:%s \n",reply_str);
+    printf("reply_str:%s - len:%d\n", reply_str, sdslen(reply_str));
+
 
     reply = json_loads(reply_str, 0, NULL);
     if (reply == NULL) {
-        log_fatal("parse %s reply fail: %s", url, reply_str);
+        printf("parse %s reply fail: %s", url, reply_str);
         goto cleanup;
     }
-    json_incref(reply);
-    printf("#################reply:%s \n",reply);
-    printf("#################reply:%s \n",json_string_value(reply));
 
+
+
+//    json_incref(reply);
 
     json_t *error;
     error = json_object_get(reply, "error");
@@ -75,13 +74,17 @@ json_t* get_peer_list(const char *url){
         goto cleanup;
     }
 
+    result = json_object_get(reply, "nodes");
+    json_incref(result);
 
 cleanup:
     if (curl) curl_easy_cleanup(curl);
     if (headers) curl_slist_free_all(headers);
     sdsfree(reply_str);
 
-    return reply;
+
+    printf("\n----------reply:%s\n", json_string_value(result));
+    return result;
 }
 
 static json_t *http_request(const char *url, double timeout)

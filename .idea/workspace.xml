@@ -23,17 +23,21 @@
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="548cf60d-e15a-468e-9eb7-9e017c4bacaa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/jobmaster/.idea/jobmaster.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blockmaster/.idea/blockmaster.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jobmaster/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jobmaster/.idea/other.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bitpeer/bp_config.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_config.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_peer.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_peer.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_request.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_request.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bitpeer/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockmaster/bm_block.c" beforeDir="false" afterPath="$PROJECT_DIR$/blockmaster/bm_block.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jobmaster/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/jobmaster/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jobmaster/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jobmaster/jm_broadcast.c" beforeDir="false" afterPath="$PROJECT_DIR$/jobmaster/jm_broadcast.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,9 +59,11 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/jobmaster" />
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -73,6 +79,11 @@
       <workItem from="1620721639870" duration="2125000" />
       <workItem from="1620874974486" duration="2358000" />
       <workItem from="1620892306953" duration="2870000" />
+      <workItem from="1621391041059" duration="15000" />
+      <workItem from="1621494921389" duration="18182000" />
+      <workItem from="1621853270082" duration="840000" />
+      <workItem from="1621855472673" duration="839000" />
+      <workItem from="1621856567511" duration="33874000" />
     </task>
     <servers />
   </component>
@@ -91,14 +102,15 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="2074" y="370" key="SettingsEditor" timestamp="1620789079235">
-      <screen x="0" y="23" width="3440" height="1417" />
-    </state>
-    <state x="2074" y="370" key="SettingsEditor/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620789079235" />
-    <state x="591" y="394" width="586" height="490" key="find.popup" timestamp="1620896117739">
-      <screen x="0" y="23" width="3440" height="1417" />
-    </state>
-    <state x="591" y="394" width="586" height="490" key="find.popup/37.1463.1440.877/0.23.3440.1417@0.23.3440.1417" timestamp="1620896117739" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/utils/ut_http_svr.c</url>
+          <line>160</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

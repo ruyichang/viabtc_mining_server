@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="hz_dev_4_6 (16b68b59-cf2b-44be-a9ff-fa45df5b4424)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/tmp.I2kvkizhgs" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
