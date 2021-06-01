@@ -321,6 +321,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
             snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
             ses->on_error(ses, errmsg);
             return -1;
+        }
     }
     log_error("-------send done---------");
 
