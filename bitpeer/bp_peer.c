@@ -21,13 +21,13 @@ static dict_t *peer_dict;
 static dict_t *block_dict;
 static int sockfd;
 
-static int  coin_height;
-static int  best_height;
+static int coin_height;
+static int best_height;
 static char best_hash[32];
 static char last_hash[32];
-static sds  last_send_hash[32];
-static sds  best_block;
-static int  notify_height;
+static char last_send_hash[32];
+static sds best_block;
+static int notify_height;
 
 static uint32_t protocol_version = 70015;
 static char *user_agent = "/Satoshi:0.19.0.1/";
@@ -40,10 +40,10 @@ struct peer_info {
 };
 
 static int broadcast_block_with_limit(void *block, size_t block_size, int limit);
+
 static int broadcast_header_with_limit(void *block, size_t block_size, int limit);
 
-static double get_sha256_bignum(const char *hash)
-{
+static double get_sha256_bignum(const char *hash) {
     double x = (uint8_t)(hash[0]);
     for (int i = 1; i < 32; ++i) {
         x = x * 256 + (uint8_t)(hash[i]);
@@ -51,8 +51,7 @@ static double get_sha256_bignum(const char *hash)
     return x;
 }
 
-static int get_difficulty(double *diff)
-{
+static int get_difficulty(double *diff) {
     double start = current_timestamp();
     json_t *r = coin_rpc_cmd(coin, 1.0, "getdifficulty", NULL);
     double end = current_timestamp();
@@ -66,19 +65,16 @@ static int get_difficulty(double *diff)
     return 0;
 }
 
-static double get_block_difficulty(const char *header_hash)
-{
+static double get_block_difficulty(const char *header_hash) {
     double hash_bignum = get_sha256_bignum(header_hash);
     return to_fixed(diff1_bignum / hash_bignum, 4);
 }
 
-static void on_diff_timer(nw_timer *timer, void *privdata)
-{
+static void on_diff_timer(nw_timer *timer, void *privdata) {
     get_difficulty(&diff_current);
 }
 
-static int get_blockcount(int *height)
-{
+static int get_blockcount(int *height) {
     double start = current_timestamp();
     json_t *r = coin_rpc_cmd(coin, 1.0, "getblockcount", NULL);
     double end = current_timestamp();
@@ -92,13 +88,11 @@ static int get_blockcount(int *height)
     return 0;
 }
 
-static void on_height_timer(nw_timer *timer, void *privdata)
-{
+static void on_height_timer(nw_timer *timer, void *privdata) {
     get_blockcount(&coin_height);
 }
 
-static int init_coin(void)
-{
+static int init_coin(void) {
     coin = coin_rpc_create(&settings.coin);
     if (coin == NULL)
         return -__LINE__;
@@ -119,13 +113,12 @@ static int init_coin(void)
     return 0;
 }
 
-static int decode_pkg(nw_ses *ses, void *data, size_t max)
-{
+static int decode_pkg(nw_ses *ses, void *data, size_t max) {
     if (max < 24)
         return 0;
     if (memcmp(data, settings.start_string, 4) != 0)
         return -1;
-    uint32_t payload_size = le32toh(*(uint32_t *)(data + 16));
+    uint32_t payload_size = le32toh(*(uint32_t * )(data + 16));
     if (payload_size > 32 * 1000 * 1000)
         return -2;
     if (24 + payload_size > max)
@@ -137,14 +130,12 @@ static int decode_pkg(nw_ses *ses, void *data, size_t max)
     return 24 + payload_size;
 }
 
-static int on_close(nw_ses *ses)
-{
+static int on_close(nw_ses *ses) {
     log_error("peer: %s close", nw_sock_human_addr(&ses->peer_addr));
     return 0;
 }
 
-static int send_p2pmsg(nw_ses *ses, const char *cmd, void *msg, size_t size)
-{
+static int send_p2pmsg(nw_ses *ses, const char *cmd, void *msg, size_t size) {
     static char *buf;
     static size_t buf_size;
     if (buf == NULL) {
@@ -154,7 +145,7 @@ static int send_p2pmsg(nw_ses *ses, const char *cmd, void *msg, size_t size)
             return -__LINE__;
     }
 
-    char cmdbuf[12] = { 0 };
+    char cmdbuf[12] = {0};
     strncpy(cmdbuf, cmd, sizeof(cmdbuf));
     char msghash[32];
     sha256d(msg, size, msghash);
@@ -172,13 +163,12 @@ static int send_p2pmsg(nw_ses *ses, const char *cmd, void *msg, size_t size)
     return 0;
 }
 
-static int send_version(nw_ses *ses)
-{
+static int send_version(nw_ses *ses) {
     char buf[1024];
     void *p = buf;
     size_t left = sizeof(buf);
 
-    char empty_addr[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0, 0, 0, 0 };
+    char empty_addr[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0, 0, 0, 0};
 
     ERR_RET_LN(pack_uint32_le(&p, &left, protocol_version));
     ERR_RET_LN(pack_uint64_le(&p, &left, 1 << 3));
@@ -189,7 +179,7 @@ static int send_version(nw_ses *ses)
     ERR_RET_LN(pack_uint64_le(&p, &left, 1));
     ERR_RET_LN(pack_buf(&p, &left, empty_addr, sizeof(empty_addr)));
     ERR_RET_LN(pack_uint16_le(&p, &left, 0));
-    ERR_RET_LN(pack_uint64_le(&p, &left, ((uint64_t)rand() << 32) + rand()));
+    ERR_RET_LN(pack_uint64_le(&p, &left, ((uint64_t) rand() << 32) + rand()));
     ERR_RET_LN(pack_varstr(&p, &left, user_agent, strlen(user_agent)));
     ERR_RET_LN(pack_uint32_le(&p, &left, 0));
     ERR_RET_LN(pack_char(&p, &left, 0));
@@ -197,8 +187,7 @@ static int send_version(nw_ses *ses)
     return send_p2pmsg(ses, "version", buf, sizeof(buf) - left);
 }
 
-static void on_connect(nw_ses *ses, bool result)
-{
+static void on_connect(nw_ses *ses, bool result) {
     if (result) {
         log_info("connect peer: %s success", nw_sock_human_addr(&ses->peer_addr));
         send_version(ses);
@@ -207,23 +196,19 @@ static void on_connect(nw_ses *ses, bool result)
     }
 }
 
-static int send_verack(nw_ses *ses)
-{
+static int send_verack(nw_ses *ses) {
     return send_p2pmsg(ses, "verack", NULL, 0);
 }
 
-static int send_pong(nw_ses *ses, void *msg, size_t size)
-{
+static int send_pong(nw_ses *ses, void *msg, size_t size) {
     return send_p2pmsg(ses, "pong", msg, size);
 }
 
-static int send_sendheaders(nw_ses *ses)
-{
+static int send_sendheaders(nw_ses *ses) {
     return send_p2pmsg(ses, "sendheaders", NULL, 0);
 }
 
-static int send_getdata(nw_ses *ses, uint32_t type, const char *hash)
-{
+static int send_getdata(nw_ses *ses, uint32_t type, const char *hash) {
     char buf[1024];
     void *p = buf;
     size_t left = sizeof(buf);
@@ -235,12 +220,11 @@ static int send_getdata(nw_ses *ses, uint32_t type, const char *hash)
     return send_p2pmsg(ses, "getdata", buf, sizeof(buf) - left);
 }
 
-static int send_getheaders(nw_ses *ses, const char *hash)
-{
+static int send_getheaders(nw_ses *ses, const char *hash) {
     char buf[1024];
     void *p = buf;
     size_t left = sizeof(buf);
-    char empty_hash[32] = { 0 };
+    char empty_hash[32] = {0};
 
     ERR_RET_LN(pack_uint32_le(&p, &left, protocol_version));
     ERR_RET_LN(pack_varint_le(&p, &left, 1));
@@ -250,8 +234,7 @@ static int send_getheaders(nw_ses *ses, const char *hash)
     return send_p2pmsg(ses, "getheaders", buf, sizeof(buf) - left);
 }
 
-static int send_inv(nw_ses *ses, uint32_t type, void *hash)
-{
+static int send_inv(nw_ses *ses, uint32_t type, void *hash) {
     char buf[1024];
     void *p = buf;
     size_t left = sizeof(buf);
@@ -263,8 +246,7 @@ static int send_inv(nw_ses *ses, uint32_t type, void *hash)
     return send_p2pmsg(ses, "inv", buf, sizeof(buf) - left);
 }
 
-static int send_header(nw_ses *ses, void *header)
-{
+static int send_header(nw_ses *ses, void *header) {
     char buf[1024];
     void *p = buf;
     size_t left = sizeof(buf);
@@ -276,30 +258,31 @@ static int send_header(nw_ses *ses, void *header)
     return send_p2pmsg(ses, "headers", buf, sizeof(buf) - left);
 }
 
-static int send_block(nw_ses *ses, void *block, size_t size)
-{
+static int send_block(nw_ses *ses, void *block, size_t size) {
     return send_p2pmsg(ses, "block", block, size);
 }
 
-static int send_block_nitify(sds hash, int height, uint32_t curtime)
-{
-    // first init last_send_hash would be all 0
-    if (last_send_hash == sdsempty()){
-        log_error("Last_hash is initing ...: %s", last_send_hash);
-        last_send_hash = &sdscatlen(last_send_hash, hash, sdslen(hash));;
-        return -__LINE__;
-    }
-
+static int send_block_nitify(sds hash, int height, uint32_t curtime) {
+    //get previous hash
+    sds previous_has = bin2hex(last_send_hash, 32);
 
     json_t *message = json_object();
     json_object_set_new(message, "height", json_integer(height));
     json_object_set_new(message, "curtime", json_integer(curtime));
     json_object_set_new(message, "hash", json_string(hash));
-    json_object_set_new(message, "prevhash", json_string(last_send_hash));
+    json_object_set_new(message, "prevhash", json_string(previous_has));
 
-    //store
-    last_send_hash = sdsempty();
-    last_send_hash = &sdscatlen(last_send_hash, hash, sdslen(hash));;
+    sdsfree(previous_has);
+
+    //if all 0 return
+    json_t *prevhash_obj = json_object_get(message, "prevhash");
+    if (prevhash_obj && json_is_string(prevhash_obj)) {
+        if (json_string_value(prevhash_obj)) == HEX_ZERO)){
+            log_error("Previous hash is initing...");
+            json_decref(message);
+            return -__LINE__;
+        }
+    }
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
@@ -330,7 +313,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
-        sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *)addr, sizeof(*addr));
+        sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
     }
 
     log_error("----------------block notify pkg_data: %s", pkg_data);
@@ -338,15 +321,13 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
     return 0;
 }
 
-static int process_sendheaders(nw_ses *ses)
-{
+static int process_sendheaders(nw_ses *ses) {
     struct peer_info *info = ses->privdata;
     info->sendheaders = true;
     return 0;
 }
 
-static int process_inv(nw_ses *ses, void *msg, size_t size)
-{
+static int process_inv(nw_ses *ses, void *msg, size_t size) {
     void *p = msg;
     size_t left = size;
 
@@ -383,8 +364,7 @@ static int process_inv(nw_ses *ses, void *msg, size_t size)
     return 0;
 }
 
-static int process_headers(nw_ses *ses, void *msg, size_t size)
-{
+static int process_headers(nw_ses *ses, void *msg, size_t size) {
     void *p = msg;
     size_t left = size;
 
@@ -416,12 +396,14 @@ static int process_headers(nw_ses *ses, void *msg, size_t size)
 
             int height = best_height + 1;
             if (height > notify_height) {
-                uint32_t block_time = le32toh(*(uint32_t *)(header + 68));
+                uint32_t block_time = le32toh(*(uint32_t * )(header + 68));
                 uint32_t curtime = time(NULL);
                 if (curtime <= block_time) {
                     curtime = block_time + 1;
                 }
                 int ret = send_block_nitify(hex, height, curtime);
+                //store
+                memcpy(last_send_hash, hash_r, sizeof(hash_r));
                 if (ret < 0) {
                     log_error("send_block_nitify fail: %d", ret);
                     sdsfree(hex);
@@ -447,12 +429,11 @@ static int process_headers(nw_ses *ses, void *msg, size_t size)
     return 0;
 }
 
-static int get_height_from_coinbase(void *p, size_t left)
-{
+static int get_height_from_coinbase(void *p, size_t left) {
     uint32_t tx_version;
     ERR_RET_LN(unpack_uint32_le(&p, &left, &tx_version));
     bool is_segwit_tx = false;
-    if (*(uint8_t *)p == 0) {
+    if (*(uint8_t *) p == 0) {
         is_segwit_tx = true;
         uint8_t marker, flag;
         ERR_RET_LN(unpack_char(&p, &left, &marker));
@@ -524,8 +505,7 @@ static int get_height_from_coinbase(void *p, size_t left)
     return height;
 }
 
-static int process_block(nw_ses *ses, void *msg, size_t size)
-{
+static int process_block(nw_ses *ses, void *msg, size_t size) {
     if (size < 80) {
         log_error("invalid block size: %zu", size);
         return -__LINE__;
@@ -573,12 +553,14 @@ static int process_block(nw_ses *ses, void *msg, size_t size)
     log_info("update best block: %s, height: %d, size: %zu", hex, best_height, size);
 
     if (best_height > notify_height) {
-        uint32_t block_time = le32toh(*(uint32_t *)(msg + 68));
+        uint32_t block_time = le32toh(*(uint32_t * )(msg + 68));
         uint32_t curtime = time(NULL);
         if (curtime <= block_time) {
             curtime = block_time + 1;
         }
         int ret = send_block_nitify(hex, best_height, curtime);
+        //store
+        memcpy(last_send_hash, hash_r, sizeof(hash_r));
         if (ret < 0) {
             log_error("send_block_nitify fail: %d", ret);
             sdsfree(hex);
@@ -594,8 +576,7 @@ static int process_block(nw_ses *ses, void *msg, size_t size)
     return 0;
 }
 
-static int process_getheaders(nw_ses *ses, void *msg, size_t size)
-{
+static int process_getheaders(nw_ses *ses, void *msg, size_t size) {
     void *p = msg;
     size_t left = size;
     uint32_t version;
@@ -612,8 +593,7 @@ static int process_getheaders(nw_ses *ses, void *msg, size_t size)
     return 0;
 }
 
-static int process_getdata(nw_ses *ses, void *msg, size_t size)
-{
+static int process_getdata(nw_ses *ses, void *msg, size_t size) {
     void *p = msg;
     size_t left = size;
     uint64_t count;
@@ -630,12 +610,11 @@ static int process_getdata(nw_ses *ses, void *msg, size_t size)
     return 0;
 }
 
-static void on_recv_pkg(nw_ses *ses, void *data, size_t size)
-{
-    char cmd[13] = { 0 };
+static void on_recv_pkg(nw_ses *ses, void *data, size_t size) {
+    char cmd[13] = {0};
     memcpy(cmd, data + 4, 12);
     void *payload = data + 24;
-    uint32_t payload_size = le32toh(*(uint32_t *)(data + 16));
+    uint32_t payload_size = le32toh(*(uint32_t * )(data + 16));
     log_debug("peer: %s, cmd: %s, size: %u", nw_sock_human_addr(&ses->peer_addr), cmd, payload_size);
     printf("---cmd: %s\n", cmd);
 
@@ -687,13 +666,11 @@ static void on_recv_pkg(nw_ses *ses, void *data, size_t size)
     }
 }
 
-static void on_error_msg(nw_ses *ses, const char *msg)
-{
+static void on_error_msg(nw_ses *ses, const char *msg) {
     log_error("peer: %s error msg: %s", nw_sock_human_addr(&ses->peer_addr), msg);
 }
 
-int update_peer(void)
-{
+int update_peer(void) {
     time_t now = time(NULL);
     json_error_t error;
     json_t *root = json_load_file(settings.peer_config_path, 0, &error);
@@ -783,7 +760,7 @@ int update_peer(void)
     while ((entry = dict_next(iter)) != NULL) {
         struct peer_info *info = entry->val;
         if (info->update_time != now) {
-            log_debug("remove peer: %s", (sds)entry->key);
+            log_debug("remove peer: %s", (sds) entry->key);
             dict_delete(peer_dict, entry->key);
         }
     }
@@ -792,20 +769,19 @@ int update_peer(void)
     return 0;
 }
 
-static uint32_t peer_dict_hash_func(const void *key)
-{
-    return dict_generic_hash_function(key, sdslen((sds)key));
+static uint32_t peer_dict_hash_func(const void *key) {
+    return dict_generic_hash_function(key, sdslen((sds) key));
 }
-static int peer_dict_key_compare(const void *key1, const void *key2)
-{
-    return sdscmp((sds)key1, (sds)key2);
+
+static int peer_dict_key_compare(const void *key1, const void *key2) {
+    return sdscmp((sds) key1, (sds) key2);
 }
-static void peer_dict_key_free(void *key)
-{
-    sdsfree((sds)key);
+
+static void peer_dict_key_free(void *key) {
+    sdsfree((sds) key);
 }
-static void peer_dict_val_free(void *val)
-{
+
+static void peer_dict_val_free(void *val) {
     struct peer_info *info = val;
     if (info->clt) {
         nw_clt_close(info->clt);
@@ -814,21 +790,19 @@ static void peer_dict_val_free(void *val)
     free(info);
 }
 
-static uint32_t block_dict_hash_func(const void *key)
-{
-    return dict_generic_hash_function(key, sdslen((sds)key));
-}
-static int block_dict_key_compare(const void *key1, const void *key2)
-{
-    return sdscmp((sds)key1, (sds)key2);
-}
-static void block_dict_key_free(void *key)
-{
-    sdsfree((sds)key);
+static uint32_t block_dict_hash_func(const void *key) {
+    return dict_generic_hash_function(key, sdslen((sds) key));
 }
 
-static void inetv4_list_free(inetv4_list *list)
-{
+static int block_dict_key_compare(const void *key1, const void *key2) {
+    return sdscmp((sds) key1, (sds) key2);
+}
+
+static void block_dict_key_free(void *key) {
+    sdsfree((sds) key);
+}
+
+static void inetv4_list_free(inetv4_list *list) {
     if (list) {
         if (list->arr)
             free(list->arr);
@@ -836,8 +810,7 @@ static void inetv4_list_free(inetv4_list *list)
     }
 }
 
-static int on_jobmaster_callback(json_t *reply)
-{
+static int on_jobmaster_callback(json_t *reply) {
     if (!reply) {
         log_fatal("get jobmaster config null");
         return -__LINE__;
@@ -869,13 +842,11 @@ static int on_jobmaster_callback(json_t *reply)
     return 0;
 }
 
-static void on_jobmaster_update(nw_timer *timer, void *privdata)
-{
+static void on_jobmaster_update(nw_timer *timer, void *privdata) {
     update_jobmaster_config(on_jobmaster_callback);
 }
 
-int init_peer(void)
-{
+int init_peer(void) {
     dict_types peer_type;
     memset(&peer_type, 0, sizeof(peer_type));
     peer_type.hash_function = peer_dict_hash_func;
@@ -917,8 +888,7 @@ int init_peer(void)
     return 0;
 }
 
-static int broadcast_block_with_limit(void *block, size_t block_size, int limit)
-{
+static int broadcast_block_with_limit(void *block, size_t block_size, int limit) {
     char hash[32];
     sha256d(block, 80, hash);
     char hash_r[32];
@@ -950,8 +920,7 @@ static int broadcast_block_with_limit(void *block, size_t block_size, int limit)
     return 0;
 }
 
-static void on_broadcast_timeout(nw_timer *timer, void *privdata)
-{
+static void on_broadcast_timeout(nw_timer *timer, void *privdata) {
     sds block = privdata;
     int ret = broadcast_header_with_limit(block, sdslen(block), 0);
     if (ret < 0) {
@@ -960,8 +929,7 @@ static void on_broadcast_timeout(nw_timer *timer, void *privdata)
     sdsfree(block);
 }
 
-int broadcast_block(void *block, size_t block_size)
-{
+int broadcast_block(void *block, size_t block_size) {
     static char last_block_hash[32];
     char hash[32];
     sha256d(block, 80, hash);
@@ -971,7 +939,7 @@ int broadcast_block(void *block, size_t block_size)
     memcpy(last_block_hash, hash, sizeof(hash));
 
     ERR_RET(broadcast_block_with_limit(block, block_size, settings.broadcast_limit));
-    if (!nw_timer_active(&broadcast_timer) && peer_dict->used > (uint32_t)settings.broadcast_limit) {
+    if (!nw_timer_active(&broadcast_timer) && peer_dict->used > (uint32_t) settings.broadcast_limit) {
         nw_timer_set(&broadcast_timer, 1, false, on_broadcast_timeout, sdsnewlen(block, block_size));
         nw_timer_start(&broadcast_timer);
     }
@@ -979,8 +947,7 @@ int broadcast_block(void *block, size_t block_size)
     return 0;
 }
 
-static int broadcast_header_with_limit(void *block, size_t block_size, int limit)
-{
+static int broadcast_header_with_limit(void *block, size_t block_size, int limit) {
     char hash[32];
     sha256d(block, 80, hash);
     char hash_r[32];
@@ -1017,8 +984,7 @@ static int broadcast_header_with_limit(void *block, size_t block_size, int limit
     return 0;
 }
 
-int broadcast_header(void *block, size_t block_size)
-{
+int broadcast_header(void *block, size_t block_size) {
     static char last_block_hash[32];
     char hash[32];
     sha256d(block, 80, hash);
@@ -1030,26 +996,24 @@ int broadcast_header(void *block, size_t block_size)
     return broadcast_header_with_limit(block, block_size, settings.broadcast_limit);
 }
 
-sds get_peer_status(void)
-{
+sds get_peer_status(void) {
     sds reply = sdsempty();
     dict_entry *entry;
     dict_iterator *iter = dict_get_iterator(peer_dict);
     while ((entry = dict_next(iter)) != NULL) {
         struct peer_info *info = entry->val;
-        reply = sdscatprintf(reply, "%s %d\n", nw_sock_human_addr(&info->clt->ses.peer_addr), nw_clt_connected(info->clt));
+        reply = sdscatprintf(reply, "%s %d\n", nw_sock_human_addr(&info->clt->ses.peer_addr),
+                             nw_clt_connected(info->clt));
     }
     dict_release_iterator(iter);
     return reply;
 }
 
-int get_peer_limit(void)
-{
+int get_peer_limit(void) {
     return dict_size(peer_dict);
 }
 
-int get_peer_num(void)
-{
+int get_peer_num(void) {
     int num = 0;
     dict_entry *entry;
     dict_iterator *iter = dict_get_iterator(peer_dict);
