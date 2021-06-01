@@ -322,6 +322,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
             log_error("errmsg:%s", errmsg);
             return -1;
         }
+        log_error("-------send ret---------:%d", ret);
     }
     log_error("-------send done---------");
 
