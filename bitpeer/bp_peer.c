@@ -277,7 +277,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     //if all 0 return
     json_t *prevhash_obj = json_object_get(message, "prevhash");
     if (prevhash_obj && json_is_string(prevhash_obj)) {
-        if (json_string_value(prevhash_obj)) == HEX_ZERO)){
+        if (json_string_value(prevhash_obj) == HEX_ZERO){
             log_error("Previous hash is initing...");
             json_decref(message);
             return -__LINE__;
