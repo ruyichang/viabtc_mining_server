@@ -291,7 +291,6 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
 
     // first init last_send_hash would be all 0
     if (pre_hex == HEX_ZERO){
-        last_send_hash
         log_error("Last_hash is initing ...: %s", hex);
         sdsfree(pre_hex);
         return -__LINE__;
