@@ -25,6 +25,7 @@ static int  coin_height;
 static int  best_height;
 static char best_hash[32];
 static char last_hash[32];
+static char last_send_hash[32];
 static sds  best_block;
 static int  notify_height;
 
@@ -282,22 +283,28 @@ static int send_block(nw_ses *ses, void *block, size_t size)
 
 static int send_block_nitify(sds hash, int height, uint32_t curtime)
 {
-    if (sizeof (last_hash) !=32){
-        memcpy(last_hash, hash, sizeof(hash));
+    char hash_r[32];
+    memcpy(hash_r, last_send_hash, 32);
+    reverse_mem(hash_r, sizeof(hash_r));
+    sds pre_hex = bin2hex(hash_r, 32);
+    memcpy(last_send_hash, hash, sizeof(last_send_hash));
+
+    // first init last_send_hash would be all 0
+    if (pre_hex == HEX_ZERO){
+        last_send_hash
+        log_error("Last_hash is initing ...: %s", hex);
+        sdsfree(pre_hex);
         return -__LINE__;
     }
-    log_error("----------------last_hash: %s", last_hash);
 
-    char hash_r[32];
-    memcpy(hash_r, last_hash, 32);
-    reverse_mem(hash_r, sizeof(hash_r));
-    sds hex = bin2hex(hash_r, 32);
 
     json_t *message = json_object();
     json_object_set_new(message, "height", json_integer(height));
     json_object_set_new(message, "curtime", json_integer(curtime));
     json_object_set_new(message, "hash", json_string(hash));
-    json_object_set_new(message, "prevhash", json_string(hex));
+    json_object_set_new(message, "prevhash", json_string(pre_hex));
+
+    sdsfree(pre_hex);
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
@@ -332,7 +339,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
     }
 
     log_error("----------------block notify pkg_data: %s", pkg_data);
-    
+
     return 0;
 }
 
