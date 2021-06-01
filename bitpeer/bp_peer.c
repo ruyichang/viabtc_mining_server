@@ -319,7 +319,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
         if (ret < 0) {
             char errmsg[100];
             snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
-            ses->on_error(ses, errmsg);
+            log_error("errmsg:%s", errmsg);
             return -1;
         }
     }
