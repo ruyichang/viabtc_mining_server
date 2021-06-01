@@ -275,14 +275,14 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     sdsfree(previous_has);
 
     //if all 0 return
-    json_t *prevhash_obj = json_object_get(message, "prevhash");
-    if (prevhash_obj && json_is_string(prevhash_obj)) {
-        if (json_string_value(prevhash_obj) == HEX_ZERO){
-            log_error("Previous hash is initing...");
-            json_decref(message);
-            return -__LINE__;
-        }
-    }
+//    json_t *prevhash_obj = json_object_get(message, "prevhash");
+//    if (prevhash_obj && json_is_string(prevhash_obj)) {
+//        if (json_string_value(prevhash_obj) == HEX_ZERO){
+//            log_error("Previous hash is initing...");
+//            json_decref(message);
+//            return -__LINE__;
+//        }
+//    }
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
@@ -311,12 +311,19 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     }
     free(message_data);
 
+    log_error("-------send begin---------");
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
-        sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
-    }
+        int ret = sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
 
-    log_error("----------------block notify pkg_data: %s", pkg_data);
+        if (ret < 0) {
+            char errmsg[100];
+            snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
+            ses->on_error(ses, errmsg);
+            return -1;
+    }
+    log_error("-------send done---------");
+
 
     return 0;
 }

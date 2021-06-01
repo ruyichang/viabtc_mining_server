@@ -55,7 +55,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/jobmaster" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/bitpeer" />
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -75,7 +75,7 @@
       <workItem from="1621494921389" duration="18182000" />
       <workItem from="1621853270082" duration="840000" />
       <workItem from="1621855472673" duration="839000" />
-      <workItem from="1621856567511" duration="42045000" />
+      <workItem from="1621856567511" duration="45489000" />
     </task>
     <servers />
   </component>
