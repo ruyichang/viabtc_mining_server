@@ -286,7 +286,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
     // first init last_send_hash would be all 0
     if (last_send_hash == sdsempty()){
         log_error("Last_hash is initing ...: %s", last_send_hash);
-        last_send_hash = sdscatlen(last_send_hash, hash, sdslen(hash));;
+        last_send_hash = &sdscatlen(last_send_hash, hash, sdslen(hash));;
         return -__LINE__;
     }
 
@@ -299,7 +299,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime)
 
     //store
     last_send_hash = sdsempty();
-    last_send_hash = sdscatlen(last_send_hash, hash, sdslen(hash));;
+    last_send_hash = &sdscatlen(last_send_hash, hash, sdslen(hash));;
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
