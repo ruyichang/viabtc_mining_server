@@ -10,30 +10,30 @@ struct settings settings;
 
 static int load_cfg_jobmaster(json_t *root, const char *key)
 {
-    log_error("----load_cfg_jobmaster----:1");
+    printf("----load_cfg_jobmaster----:1\n");
 
     int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
     if (ret < 0) {
         return -__LINE__;
     }
-    log_error("----load_cfg_jobmaster----:2");
+    printf("----load_cfg_jobmaster----:2\n");
 
     ret = init_jobmaster_config();
     if (ret < 0) {
         return -__LINE__;
     }
-    log_error("----load_cfg_jobmaster----:3");
+    printf("----load_cfg_jobmaster----:3\n");
 
     settings.jobmaster = malloc(sizeof(inetv4_list));
     ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
     if (ret < 0) {
         char *str = json_dumps(settings.jobmaster_cfg, 0);
-        log_error("load cfg jobmaster fail, jobmaster_cfg: %s", str);
+        printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
         free(str);
         return -__LINE__;
     }
     char *str = json_dumps(settings.jobmaster_cfg, 0);
-    log_error("-----------load cfg jobmaster successful, jobmaster_cfg: %s", str);
+    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
     free(str);
 
     return 0;
@@ -77,14 +77,14 @@ int do_load_config(json_t *root)
         printf("read request_auth fail: %d\n", ret);
         return -__LINE__;
     }
-    log_error("----load_cfg_jobmaster----:begin");
+    printf("----load_cfg_jobmaster----:begin\n");
     ret = load_cfg_jobmaster(root, "jobmaster_url");
     if (ret < 0) {
-        log_error("----load_cfg_jobmaster----:error");
+        printf("----load_cfg_jobmaster----:error\n");
         printf("load cfg jobmaster fail: %d\n", ret);
         return -__LINE__;
     }
-    log_error("----load_cfg_jobmaster----:end");
+    printf("----load_cfg_jobmaster----:end\n");
 
     ret = read_cfg_int(root, "jobmaster_update_interval", &settings.jobmaster_update_interval, false, 30);
     if (ret < 0) {

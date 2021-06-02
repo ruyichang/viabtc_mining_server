@@ -628,7 +628,7 @@ static void on_recv_pkg(nw_ses *ses, void *data, size_t size) {
     void *payload = data + 24;
     uint32_t payload_size = le32toh(*(uint32_t * )(data + 16));
     log_debug("peer: %s, cmd: %s, size: %u", nw_sock_human_addr(&ses->peer_addr), cmd, payload_size);
-    printf("---cmd: %s\n", cmd);
+//    printf("---cmd: %s\n", cmd);
 
     if (strcmp(cmd, "version") == 0) {
         int ret = send_verack(ses);
