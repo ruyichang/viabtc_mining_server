@@ -77,6 +77,18 @@ int do_load_config(json_t *root)
         printf("read request_auth fail: %d\n", ret);
         return -__LINE__;
     }
+
+    //load jobmaster directly from cfg file
+    json_t *node = json_object_get(root, "jobmasters");
+//    if (!node || !json_is_object(node)){
+//        return -__LINE__;
+//    }
+    settings.jobmaster_cfg = json_object_get(node, "jobmaster");
+
+    char *str = json_dumps(settings.jobmaster_cfg, 0);
+    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
+    free(str);
+
     printf("----load_cfg_jobmaster----:begin\n");
     ret = load_cfg_jobmaster(root, "jobmaster_url");
     if (ret < 0) {
@@ -140,17 +152,6 @@ int do_load_config(json_t *root)
         printf("load http svr config fail: %d\n", ret);
         return -__LINE__;
     }
-
-    //load jobmaster directly from cfg file
-    json_t *node = json_object_get(root, "jobmasters");
-//    if (!node || !json_is_object(node)){
-//        return -__LINE__;
-//    }
-    settings.jobmaster_cfg = json_object_get(node, "jobmaster");
-
-    char *str = json_dumps(settings.jobmaster_cfg, 0);
-    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
-    free(str);
 
     return 0;
 }
