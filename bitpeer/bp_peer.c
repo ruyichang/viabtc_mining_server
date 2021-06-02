@@ -852,11 +852,6 @@ static int on_jobmaster_callback(json_t *reply) {
 //    log_info("update jobmaster config success");
 
 
-    char* jb_str ="http://172.17.0.4:5555/newblockmonitor";
-    inetv4_list *jobmaster = malloc(sizeof(inetv4_list));
-    parse_inetv4_addr( jb_str, &jobmaster->arr[1]);
-    settings.jobmaster = jobmaster;
-
     return 0;
 }
 
