@@ -823,33 +823,33 @@ static void inetv4_list_free(inetv4_list *list) {
 }
 
 static int on_jobmaster_callback(json_t *reply) {
-    if (!reply) {
-        log_fatal("get jobmaster config null");
-        return -__LINE__;
-    }
-
-    char *str_new = json_dumps(reply, 0);
-    char *str_old = json_dumps(settings.jobmaster_cfg, 0);
-    log_info("new jobmaster config: %s, old jobmaster config: %s", str_new, str_old);
-
-    inetv4_list *jobmaster = malloc(sizeof(inetv4_list));
-    int ret = load_cfg_inetv4_list_direct(reply, jobmaster);
-    if (ret < 0) {
-        log_fatal("update jobmaster fail, ret: %d, json reply: %s", ret, str_new);
-        free(str_new);
-        free(str_old);
-        inetv4_list_free(jobmaster);
-        return -__LINE__;
-    }
-    free(str_new);
-    free(str_old);
-
-    json_decref(settings.jobmaster_cfg);
-    settings.jobmaster_cfg = reply;
-
-    inetv4_list_free(settings.jobmaster);
-    settings.jobmaster = jobmaster;
-    log_info("update jobmaster config success");
+//    if (!reply) {
+//        log_fatal("get jobmaster config null");
+//        return -__LINE__;
+//    }
+//
+//    char *str_new = json_dumps(reply, 0);
+//    char *str_old = json_dumps(settings.jobmaster_cfg, 0);
+//    log_info("new jobmaster config: %s, old jobmaster config: %s", str_new, str_old);
+//
+//    inetv4_list *jobmaster = malloc(sizeof(inetv4_list));
+//    int ret = load_cfg_inetv4_list_direct(reply, jobmaster);
+//    if (ret < 0) {
+//        log_fatal("update jobmaster fail, ret: %d, json reply: %s", ret, str_new);
+//        free(str_new);
+//        free(str_old);
+//        inetv4_list_free(jobmaster);
+//        return -__LINE__;
+//    }
+//    free(str_new);
+//    free(str_old);
+//
+//    json_decref(settings.jobmaster_cfg);
+//    settings.jobmaster_cfg = reply;
+//
+//    inetv4_list_free(settings.jobmaster);
+//    settings.jobmaster = jobmaster;
+//    log_info("update jobmaster config success");
 
     return 0;
 }
