@@ -33,7 +33,7 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
 //        return -__LINE__;
 //    }
 
-    ERR_RET(parse_inetv4_addr(settings.jobmaster_url, &settings.jobmaster->arr[1]));
+    ERR_RET(parse_inetv4_addr(settings.jobmaster_url, &settings.jobmaster->arr));
 
 
     return 0;
