@@ -96,12 +96,18 @@ static void on_job_cleanup(nw_job_entry *entry)
 
 int init_jobmaster_config(void)
 {
-    json_t *data = http_request(settings.jobmaster_url, 2.0);
-    if (data == NULL)
-        return -__LINE__;
-    if (settings.jobmaster_cfg)
-        json_decref(settings.jobmaster_cfg);
-    settings.jobmaster_cfg = data;
+//    json_t *data = http_request(settings.jobmaster_url, 2.0);
+//    if (data == NULL)
+//        return -__LINE__;
+//    if (settings.jobmaster_cfg)
+//        json_decref(settings.jobmaster_cfg);
+//    settings.jobmaster_cfg = data;
+//    return 0;
+
+    json_t *message = json_array();
+    json_array_set_new(message, 1, json_string("{["http://172.17.0.4:5555/newblockmonitor"]}"));
+    settings.jobmaster_cfg = message;
+
     return 0;
 }
 

@@ -15,10 +15,10 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
         return -__LINE__;
     }
 
-//    ret = init_jobmaster_config();
-//    if (ret < 0) {
-//        return -__LINE__;
-//    }
+    ret = init_jobmaster_config();
+    if (ret < 0) {
+        return -__LINE__;
+    }
 
     settings.jobmaster = malloc(sizeof(inetv4_list));
     ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);

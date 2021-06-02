@@ -31,6 +31,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_config.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_config.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_request.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_request.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/poolbench/pb_request.c" beforeDir="false" afterPath="$PROJECT_DIR$/poolbench/pb_request.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +85,7 @@
       <workItem from="1621494921389" duration="18182000" />
       <workItem from="1621853270082" duration="840000" />
       <workItem from="1621855472673" duration="839000" />
-      <workItem from="1621856567511" duration="55531000" />
+      <workItem from="1621856567511" duration="56023000" />
     </task>
     <servers />
   </component>
