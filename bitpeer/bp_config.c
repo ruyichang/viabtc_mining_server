@@ -15,10 +15,11 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
         return -__LINE__;
     }
 
-    ret = init_jobmaster_config();
-    if (ret < 0) {
-        return -__LINE__;
-    }
+    //reset settings.jobmaster_cfg when get fron url
+//    ret = init_jobmaster_config();
+//    if (ret < 0) {
+//        return -__LINE__;
+//    }
 
     // set jobmaster here instead of get that from url
     //url is nor exist now
@@ -78,16 +79,15 @@ int do_load_config(json_t *root)
         return -__LINE__;
     }
 
+    //------------------------------------------------
     //load jobmaster directly from cfg file
-    json_t *node = json_object_get(root, "jobmasters");
-//    if (!node || !json_is_object(node)){
-//        return -__LINE__;
-//    }
-    settings.jobmaster_cfg = json_object_get(node, "jobmaster");
+    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
 
     char *str = json_dumps(settings.jobmaster_cfg, 0);
     printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
     free(str);
+
+    //------------------------------------------------
 
     printf("----load_cfg_jobmaster----:begin\n");
     ret = load_cfg_jobmaster(root, "jobmaster_url");
