@@ -315,6 +315,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
         int ret = sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+        log_error("-1------send ret---------:%d", ret);
 
         if (ret < 0) {
             char errmsg[100];
@@ -322,7 +323,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
             log_error("errmsg:%s", errmsg);
             return -1;
         }
-        log_error("-------send ret---------:%d", ret);
+        log_error("-2------send ret---------:%d", ret);
     }
     log_error("-------send done---------");
 
