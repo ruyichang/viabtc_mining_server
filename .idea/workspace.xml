@@ -30,7 +30,7 @@
     <list default="true" id="548cf60d-e15a-468e-9eb7-9e017c4bacaa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_config.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_config.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bitpeer/bp_peer.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_peer.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitpeer/bp_request.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_request.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +42,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1sEiFvwUL9dRRAMomXndWzTX6C8" />
   <component name="ProjectViewState">
@@ -76,7 +84,7 @@
       <workItem from="1621494921389" duration="18182000" />
       <workItem from="1621853270082" duration="840000" />
       <workItem from="1621855472673" duration="839000" />
-      <workItem from="1621856567511" duration="53843000" />
+      <workItem from="1621856567511" duration="55531000" />
     </task>
     <servers />
   </component>

@@ -176,7 +176,7 @@ int init_jobmaster_config(void)
 //    return 0;
 
     json_t *message = json_array();
-    json_array_set_new(message, 1, json_string("{[127.0.0.1:6000]}"));
+    json_array_set_new(message, 1, json_string("{[172.17.0.4:5555]}"));
     settings.jobmaster_cfg = message;
 
     return 0;
