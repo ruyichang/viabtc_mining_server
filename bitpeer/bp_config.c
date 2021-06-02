@@ -77,11 +77,15 @@ int do_load_config(json_t *root)
         printf("read request_auth fail: %d\n", ret);
         return -__LINE__;
     }
+    log_error("----load_cfg_jobmaster----:begin");
     ret = load_cfg_jobmaster(root, "jobmaster_url");
     if (ret < 0) {
+        log_error("----load_cfg_jobmaster----:error");
         printf("load cfg jobmaster fail: %d\n", ret);
         return -__LINE__;
     }
+    log_error("----load_cfg_jobmaster----:end");
+
     ret = read_cfg_int(root, "jobmaster_update_interval", &settings.jobmaster_update_interval, false, 30);
     if (ret < 0) {
         printf("read jobmaster_update_interval fail: %d\n", ret);
