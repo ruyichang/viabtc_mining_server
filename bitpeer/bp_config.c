@@ -10,10 +10,10 @@ struct settings settings;
 
 static int load_cfg_jobmaster(json_t *root, const char *key)
 {
-    int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
-    if (ret < 0) {
-        return -__LINE__;
-    }
+//    int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
+//    if (ret < 0) {
+//        return -__LINE__;
+//    }
 
     //reset settings.jobmaster_cfg when get fron url
 //    ret = init_jobmaster_config();
@@ -24,18 +24,17 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
     // set jobmaster here instead of get that from url
     //url is nor exist now
 
-    settings.jobmaster = malloc(sizeof(inetv4_list));
-    ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
-    if (ret < 0) {
-        char *str = json_dumps(settings.jobmaster_cfg, 0);
-        printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
-        free(str);
-        return -__LINE__;
-    }
-    //test logs
-    char *str = json_dumps(settings.jobmaster_cfg, 0);
-    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
-    free(str);
+//    settings.jobmaster = malloc(sizeof(inetv4_list));
+//    ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
+//    if (ret < 0) {
+//        char *str = json_dumps(settings.jobmaster_cfg, 0);
+//        printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
+//        free(str);
+//        return -__LINE__;
+//    }
+
+    ERR_RET(parse_inetv4_addr(settings.jobmaster_url, &settings.jobmaster->arr[0]));
+
 
     return 0;
 }
@@ -81,11 +80,11 @@ int do_load_config(json_t *root)
 
     //------------------------------------------------
     //load jobmaster directly from cfg file
-    settings.jobmaster_cfg = json_array_get(root, "jobmaster");
-
-    char *str = json_dumps(settings.jobmaster_cfg, 0);
-    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
-    free(str);
+//    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
+//
+//    char *str = json_dumps(settings.jobmaster_cfg, 0);
+//    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
+//    free(str);
 
     //------------------------------------------------
 
