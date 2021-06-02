@@ -312,6 +312,8 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     free(message_data);
 
     log_error("-------send begin---------");
+    log_error("settings.jobmaster->count:%d", settings.jobmaster->count);
+
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
         int ret = sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
