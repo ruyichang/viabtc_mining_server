@@ -81,7 +81,7 @@ int do_load_config(json_t *root)
 
     //------------------------------------------------
     //load jobmaster directly from cfg file
-    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
+    settings.jobmaster_cfg = json_array_get(root, "jobmaster");
 
     char *str = json_dumps(settings.jobmaster_cfg, 0);
     printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
