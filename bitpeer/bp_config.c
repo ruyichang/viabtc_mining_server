@@ -10,15 +10,19 @@ struct settings settings;
 
 static int load_cfg_jobmaster(json_t *root, const char *key)
 {
+    log_error("----load_cfg_jobmaster----:1");
+
     int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
     if (ret < 0) {
         return -__LINE__;
     }
+    log_error("----load_cfg_jobmaster----:2");
 
     ret = init_jobmaster_config();
     if (ret < 0) {
         return -__LINE__;
     }
+    log_error("----load_cfg_jobmaster----:3");
 
     settings.jobmaster = malloc(sizeof(inetv4_list));
     ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
