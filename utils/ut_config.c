@@ -160,6 +160,10 @@ int load_cfg_http_svr(json_t *root, const char *key, http_svr_cfg *cfg)
     return 0;
 }
 
+//int load_cfg_jobserver(json_t *root, const char *key, json_t *cfg){
+//
+//}
+
 int load_cfg_clt(json_t *root, const char *key, nw_clt_cfg *cfg)
 {
     json_t *node = json_object_get(root, key);

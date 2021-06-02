@@ -141,6 +141,16 @@ int do_load_config(json_t *root)
         return -__LINE__;
     }
 
+    //load jobmaster directly from cfg file
+    json_t *node = json_object_get(root, "jobmasters");
+    if (!node || !json_is_object(node))
+        return -__LINE__;
+    settings.jobmaster_cfg = json_object_get(node, "jobmaster");
+
+    char *str = json_dumps(settings.jobmaster_cfg, 0);
+    printf("-1----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
+    free(str);
+
     return 0;
 }
 
