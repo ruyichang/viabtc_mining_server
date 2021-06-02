@@ -10,28 +10,28 @@ struct settings settings;
 
 static int load_cfg_jobmaster(json_t *root, const char *key)
 {
-    int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
-    if (ret < 0) {
-        return -__LINE__;
-    }
-
-    ret = init_jobmaster_config();
-    if (ret < 0) {
-        return -__LINE__;
-    }
-
-    settings.jobmaster = malloc(sizeof(inetv4_list));
-    ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
-    if (ret < 0) {
-        char *str = json_dumps(settings.jobmaster_cfg, 0);
-        printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
-        free(str);
-        return -__LINE__;
-    }
-    //test logs
-    char *str = json_dumps(settings.jobmaster_cfg, 0);
-    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
-    free(str);
+//    int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
+//    if (ret < 0) {
+//        return -__LINE__;
+//    }
+//
+//    ret = init_jobmaster_config();
+//    if (ret < 0) {
+//        return -__LINE__;
+//    }
+//
+//    settings.jobmaster = malloc(sizeof(inetv4_list));
+//    ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
+//    if (ret < 0) {
+//        char *str = json_dumps(settings.jobmaster_cfg, 0);
+//        printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
+//        free(str);
+//        return -__LINE__;
+//    }
+//    //test logs
+//    char *str = json_dumps(settings.jobmaster_cfg, 0);
+//    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
+//    free(str);
 
     return 0;
 }
