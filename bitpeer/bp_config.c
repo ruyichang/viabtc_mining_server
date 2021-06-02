@@ -28,6 +28,9 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
         free(str);
         return -__LINE__;
     }
+    char *str = json_dumps(settings.jobmaster_cfg, 0);
+    log_error("-----------load cfg jobmaster successful, jobmaster_cfg: %s", str);
+    free(str);
 
     return 0;
 }
