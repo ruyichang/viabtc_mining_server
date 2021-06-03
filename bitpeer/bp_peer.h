@@ -15,7 +15,6 @@ int broadcast_header(void *block, size_t block_size);
 sds get_peer_status(void);
 int get_peer_num(void);
 int get_peer_limit(void);
-static void test_on_cron_check(nw_timer *timer, void *data);
 
 # endif
 
