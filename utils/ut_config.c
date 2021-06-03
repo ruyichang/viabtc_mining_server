@@ -9,11 +9,16 @@
 int parse_inetv4_addr(const char *str, struct sockaddr_in *addr)
 {
     char *tmp = strdup(str);
+
+    printf("[parse_inetv4_addr] tmp:[%s], str:[%s]\n", tmp, str);
+
     char *ip = strtok(tmp, ":");
+//    char *ip = strtok(tmp, ": \t");
     if (ip == NULL) {
         return -__LINE__;
     }
     char *port = strtok(NULL, ":");
+//    char *port = strtok(NULL, ": \t");
     if (port == NULL) {
         return -__LINE__;
     }
