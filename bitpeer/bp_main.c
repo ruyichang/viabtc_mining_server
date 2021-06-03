@@ -28,13 +28,18 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
 
+        //------------ logs the ip:port-------------begin//
         char str[128];
         char ip[46];
         inet_ntop(2, &addr->sin_addr, ip, sizeof(ip));
         snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->sin_port));
-
         log_error("--send to--:%s", str);
+        //------------ logs the ip:port -------------end//
 
+
+        if (connect(sockfd, (struct sockaddr*)&addr,
+                    sizeof(struct addr)) == -1){
+        }
 
         int ret = sendto(sockfd, buf, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
@@ -43,6 +48,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
             log_error("errmsg:%s", errmsg);
         }
         log_error("------test_on_cron_check ret---------:%d", ret);
+        close(sockfd);
     }
 
     log_error("------test_on_cron_check----sendto---end--");
