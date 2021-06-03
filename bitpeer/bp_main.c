@@ -30,8 +30,8 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
         char str[128];
         char ip[46];
-        inet_ntop(2, &addr->in.sin_addr, ip, sizeof(ip));
-        snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->in.sin_port));
+        inet_ntop(2, &addr->sin_addr, ip, sizeof(ip));
+        snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->sin_port));
 
         log_error("--send to--:%s", str);
 

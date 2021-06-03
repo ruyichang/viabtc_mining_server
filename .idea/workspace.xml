@@ -28,7 +28,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="548cf60d-e15a-468e-9eb7-9e017c4bacaa" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bitpeer/bp_main.c" beforeDir="false" afterPath="$PROJECT_DIR$/bitpeer/bp_main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,7 +82,7 @@
       <workItem from="1621494921389" duration="18182000" />
       <workItem from="1621853270082" duration="840000" />
       <workItem from="1621855472673" duration="839000" />
-      <workItem from="1621856567511" duration="77249000" />
+      <workItem from="1621856567511" duration="77529000" />
     </task>
     <servers />
   </component>
