@@ -38,7 +38,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
 
         if (connect(sockfd, (struct sockaddr*)&addr,
-                    sizeof(struct addr)) == -1){
+                    sizeof(struct sockaddr)) == -1){
         }
 
         int ret = sendto(sockfd, buf, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
