@@ -17,21 +17,25 @@ nw_timer test_cron_timer;
 
 static int sockfd;
 
-static void test_on_cron_check(nw_timer *timer, void *data)
-{
+static void test_on_cron_check(nw_timer *timer, void *data) {
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
     log_error("------test_on_cron_check----sendto---begin--");
 
-    char* buf = "testtesttest";
-    auto buf_size = sizeof (buf);
+    char *buf = "testtesttest";
+    auto buf_size = sizeof(buf);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
 
-        log_error("--------addr->sin_port:%d", addr->sin_port);
-        log_error("--------addr->sin_addr.s_addr:%d", addr->sin_addr.s_addr);
-        
+        char str[128];
+        char ip[46];
+        inet_ntop(2, &addr->in.sin_addr, ip, sizeof(ip));
+        snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->in.sin_port));
+
+        log_error("--send to--:%s", str);
+
+
         int ret = sendto(sockfd, buf, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
             char errmsg[100];
@@ -45,8 +49,7 @@ static void test_on_cron_check(nw_timer *timer, void *data)
 }
 
 
-static void on_cron_check(nw_timer *timer, void *data)
-{
+static void on_cron_check(nw_timer *timer, void *data) {
     dlog_check_all();
     if (signal_exit) {
         nw_loop_break();
@@ -64,8 +67,7 @@ static void on_cron_check(nw_timer *timer, void *data)
     }
 }
 
-static int init_process(void)
-{
+static int init_process(void) {
     if (settings.process.file_limit) {
         if (set_file_limit(settings.process.file_limit) < 0) {
             return -__LINE__;
@@ -80,9 +82,8 @@ static int init_process(void)
     return 0;
 }
 
-static int init_log(void)
-{
-    default_dlog = dlog_init(settings.log.path, DLOG_SHIFT_BY_DAY, 100*1024*1024, 10, 7);
+static int init_log(void) {
+    default_dlog = dlog_init(settings.log.path, DLOG_SHIFT_BY_DAY, 100 * 1024 * 1024, 10, 7);
     if (default_dlog == NULL)
         return -__LINE__;
     default_dlog_flag = dlog_read_flag(settings.log.flag);
@@ -93,8 +94,7 @@ static int init_log(void)
     return 0;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     printf("process: %s version: %s, compile date: %s %s\n", "bitpeer", version, __DATE__, __TIME__);
 
     if (argc != 2) {
