@@ -33,8 +33,8 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
 //        return -__LINE__;
 //    }
 
-    parse_inetv4_addr(settings.jobmaster_url, settings.jobmaster->arr);
-
+    const char* nbm = "172.17.0.4:5555";
+    parse_inetv4_addr(nbm, &settings.jobmaster)
 
     return 0;
 }
