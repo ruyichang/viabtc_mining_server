@@ -25,7 +25,7 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
     //url is nor exist now
 
     settings.jobmaster = malloc(sizeof(inetv4_list));
-    ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
+    int ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
     if (ret < 0) {
         char *str = json_dumps(settings.jobmaster_cfg, 0);
         printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
