@@ -1027,3 +1027,23 @@ int get_peer_num(void) {
     return num;
 }
 
+static void test_on_cron_check(nw_timer *timer, void *data)
+{
+    log_error("------test_on_cron_check----sendto---begin--");
+
+    char* buf = "testtesttest";
+    auto buf_size = sizeof (buf);
+
+    for (size_t i = 0; i < settings.jobmaster->count; ++i) {
+        struct sockaddr_in *addr = &settings.jobmaster->arr[i];
+        int ret = sendto(sockfd, buf, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+        if (ret < 0) {
+            char errmsg[100];
+            snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
+            log_error("errmsg:%s", errmsg);
+        }
+        log_error("------test_on_cron_check ret---------:%d", ret);
+    }
+
+    log_error("------test_on_cron_check----sendto---end--");
+}
