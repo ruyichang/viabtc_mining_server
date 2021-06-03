@@ -8,6 +8,15 @@
 
 struct settings settings;
 
+static void inetv4_list_free(inetv4_list *list)
+{
+    if (list) {
+        if (list->arr)
+            free(list->arr);
+        free(list);
+    }
+}
+
 static int load_cfg_jobmaster(json_t *root, const char *key)
 {
 //    int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
