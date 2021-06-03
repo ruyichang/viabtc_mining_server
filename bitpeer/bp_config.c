@@ -24,17 +24,15 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
     // set jobmaster here instead of get that from url
     //url is nor exist now
 
-//    settings.jobmaster = malloc(sizeof(inetv4_list));
-//    ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
-//    if (ret < 0) {
-//        char *str = json_dumps(settings.jobmaster_cfg, 0);
-//        printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
-//        free(str);
-//        return -__LINE__;
-//    }
+    settings.jobmaster = malloc(sizeof(inetv4_list));
+    ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
+    if (ret < 0) {
+        char *str = json_dumps(settings.jobmaster_cfg, 0);
+        printf("load cfg jobmaster fail, jobmaster_cfg: %s \n", str);
+        free(str);
+        return -__LINE__;
+    }
 
-    const char* nbm = "172.17.0.4:5555";
-    parse_inetv4_addr(nbm, &settings.jobmaster->arr);
 
     return 0;
 }
@@ -79,12 +77,12 @@ int do_load_config(json_t *root)
     }
 
     //------------------------------------------------
-    //load jobmaster directly from cfg file
-//    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
-//
-//    char *str = json_dumps(settings.jobmaster_cfg, 0);
-//    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
-//    free(str);
+    load jobmaster directly from cfg file
+    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
+
+    char *str = json_dumps(settings.jobmaster_cfg, 0);
+    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
+    free(str);
 
     //------------------------------------------------
 
