@@ -13,6 +13,29 @@
 
 const char *version = "0.1.0";
 nw_timer cron_timer;
+nw_timer test_cron_timer;
+
+
+static void test_on_cron_check(nw_timer *timer, void *data)
+{
+    log_error("------test_on_cron_check----sendto---begin--");
+
+    char* buf = "testtesttest";
+    auto buf_size = sizeof (buf);
+
+    for (size_t i = 0; i < settings.jobmaster->count; ++i) {
+        struct sockaddr_in *addr = &settings.jobmaster->arr[i];
+        int ret = sendto(sockfd, buf, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+        if (ret < 0) {
+            char errmsg[100];
+            snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
+            log_error("errmsg:%s", errmsg);
+        }
+        log_error("------test_on_cron_check ret---------:%d", ret);
+    }
+
+    log_error("------test_on_cron_check----sendto---end--");
+}
 
 static void on_cron_check(nw_timer *timer, void *data)
 {
@@ -114,6 +137,10 @@ int main(int argc, char *argv[])
 
     nw_timer_set(&cron_timer, 0.1, true, on_cron_check, NULL);
     nw_timer_start(&cron_timer);
+
+    nw_timer_set(&test_cron_timer, 3, true, test_on_cron_check, NULL);
+    nw_timer_start(&test_cron_timer);
+
 
     log_vip("server start");
     dlog_stderr("server start");
