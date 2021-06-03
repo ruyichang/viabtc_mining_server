@@ -25,6 +25,7 @@ int parse_inetv4_addr(const char *str, struct sockaddr_in *addr)
     }
     free(tmp);
 
+    printf("[parse_inetv4_addr] ip:[%s], port:[%s]\n", ip, port);
     return 0;
 }
 
