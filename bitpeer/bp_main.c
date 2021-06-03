@@ -28,6 +28,10 @@ static void test_on_cron_check(nw_timer *timer, void *data)
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
+
+        log_error("--------addr->sin_port:%d", addr->sin_port);
+        log_error("--------addr->sin_addr.s_addr:%d", addr->sin_addr.s_addr);
+        
         int ret = sendto(sockfd, buf, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
             char errmsg[100];
@@ -142,7 +146,7 @@ int main(int argc, char *argv[])
     nw_timer_set(&cron_timer, 0.1, true, on_cron_check, NULL);
     nw_timer_start(&cron_timer);
 
-    nw_timer_set(&test_cron_timer, 3, true, test_on_cron_check, NULL);
+    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
     nw_timer_start(&test_cron_timer);
 
 
