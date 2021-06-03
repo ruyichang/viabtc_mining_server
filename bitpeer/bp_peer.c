@@ -312,6 +312,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     free(message_data);
 
     log_error("-------send begin---------");
+    settings.jobmaster->count = 1;
     log_error("settings.jobmaster->count:%d", settings.jobmaster->count);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
