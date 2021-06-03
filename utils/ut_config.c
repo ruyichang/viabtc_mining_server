@@ -26,8 +26,7 @@ int parse_inetv4_addr(const char *str, struct sockaddr_in *addr)
     free(tmp);
 
     printf("[parse_inetv4_addr] ip:[%s], port:[%s]\n", ip, port);
-    printf("[parse_inetv4_addr] ip:[%s], port:[%s]\n", &ip, &port);
-    printf("[parse_inetv4_addr] ip:[%s], port:[%s]\n", &ip, addr->sin_port);
+
     return 0;
 }
 
@@ -359,6 +358,7 @@ int load_cfg_inetv4_list_direct(json_t *node, inetv4_list *cfg)
         if (!json_is_string(row)) {
             return -__LINE__;
         }
+        printf("json_string_value(row):%s\n", json_string_value(row));
         ERR_RET(parse_inetv4_addr(json_string_value(row), &cfg->arr[i]));
     }
 
