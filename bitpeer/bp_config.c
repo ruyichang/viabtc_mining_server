@@ -90,14 +90,11 @@ int do_load_config(json_t *root)
 
     //------------------------------------------------
 
-    printf("----load_cfg_jobmaster----:begin\n");
     ret = load_cfg_jobmaster(root, "jobmaster_url");
     if (ret < 0) {
-        printf("----load_cfg_jobmaster----:error\n");
         printf("load cfg jobmaster fail: %d\n", ret);
         return -__LINE__;
     }
-    printf("----load_cfg_jobmaster----:end\n");
 
     ret = read_cfg_int(root, "jobmaster_update_interval", &settings.jobmaster_update_interval, false, 30);
     if (ret < 0) {
