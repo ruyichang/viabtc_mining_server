@@ -355,6 +355,9 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
     void *p = msg;
     size_t left = size;
 
+    log_info("peer: %s, recv all header: %s", nw_sock_human_addr(&ses->peer_addr), p);
+
+
     uint64_t count;
     ERR_RET_LN(unpack_varint_le(&p, &left, &count));
     if (count != 1)
@@ -365,6 +368,9 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         uint64_t tx_count;
         ERR_RET_LN(unpack_buf(&p, &left, header, 80));
         ERR_RET_LN(unpack_varint_le(&p, &left, &tx_count));
+
+        log_info("peer: %s, recv all header unpacked: %s", nw_sock_human_addr(&ses->peer_addr), header);
+
 
         char hash[32];
         sha256d(header, sizeof(header), hash);
