@@ -26,7 +26,7 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
     }
 
     char *str = json_dumps(settings.jobmaster_url, 0);
-    printf("[load_cfg_jobmaster]load cfg jobmaster_url fail, jobmaster_url: %s", str);
+    printf("[load_cfg_jobmaster]load cfg jobmaster_url fail, jobmaster_url: %s\n", str);
     free(str);
 
     ret = init_jobmaster_config();
