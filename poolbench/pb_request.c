@@ -96,12 +96,21 @@ static void on_job_cleanup(nw_job_entry *entry)
 
 int init_jobmaster_config(void)
 {
+    printf("[init_jobmaster_config]1.\n");
+
     json_t *data = http_request(settings.jobmaster_url, 5.0);
-    if (data == NULL)
+    printf("[init_jobmaster_config]2.\n");
+
+    if (data == NULL){
+        printf("[init_jobmaster_config]3.\n");
         return -__LINE__;
+    }
+
     if (settings.jobmaster_cfg)
         json_decref(settings.jobmaster_cfg);
     settings.jobmaster_cfg = data;
+    printf("[init_jobmaster_config]4.\n");
+
     return 0;
 }
 
