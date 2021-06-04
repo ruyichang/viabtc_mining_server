@@ -35,17 +35,23 @@ static json_t *http_request(const char *url, double timeout)
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, (long)(timeout * 1000));
 
+    printf("http_request -- 1. \n");
+
     CURLcode ret = curl_easy_perform(curl);
     if (ret != CURLE_OK) {
         log_fatal("get %s fail: %s", url, curl_easy_strerror(ret));
         goto cleanup;
     }
+    printf("http_request -- 2. \n");
+
 
     reply = json_loads(reply_str, 0, NULL);
     if (reply == NULL) {
         log_fatal("parse %s reply fail: %s", url, reply_str);
         goto cleanup;
     }
+
+    printf("http_request -- 3. \n");
 
     json_t *error;
     error = json_object_get(reply, "error");
@@ -54,11 +60,15 @@ static json_t *http_request(const char *url, double timeout)
         goto cleanup;
     }
 
+    printf("http_request -- 4. \n");
+
     json_t *message = json_object_get(error, "message");
     if (!message || strcmp(json_string_value(message), "ok") != 0) {
         log_fatal("reply error: %s: %s", url, reply_str);
         goto cleanup;
     }
+    printf("http_request -- 5. \n");
+
 
     result = json_object_get(reply, "result");
     json_incref(result);
