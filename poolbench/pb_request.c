@@ -47,7 +47,7 @@ static json_t *http_request(const char *url, double timeout)
 
     reply = json_loads(reply_str, 0, NULL);
     if (reply == NULL) {
-        log_fatal("parse %s reply fail: %s", url, reply_str);
+        log_fatal("[json_loads]parse %s reply fail: %s", url, reply_str);
         goto cleanup;
     }
 
@@ -56,7 +56,7 @@ static json_t *http_request(const char *url, double timeout)
     json_t *error;
     error = json_object_get(reply, "error");
     if (!error) {
-        log_fatal("reply error: %s: %s", url, reply_str);
+        log_fatal("[\"error\"]reply error: %s: %s", url, reply_str);
         goto cleanup;
     }
 
@@ -64,7 +64,7 @@ static json_t *http_request(const char *url, double timeout)
 
     json_t *message = json_object_get(error, "message");
     if (!message || strcmp(json_string_value(message), "ok") != 0) {
-        log_fatal("reply error: %s: %s", url, reply_str);
+        log_fatal("[\"message\"]reply error: %s: %s", url, reply_str);
         goto cleanup;
     }
     printf("http_request -- 5. \n");
@@ -87,7 +87,7 @@ static void on_job(nw_job_entry *entry, void *privdata)
 {
     double start = current_timestamp();
     struct request_context *req = entry->request;
-    entry->reply = http_request(req->url, 2.0);
+    entry->reply = http_request(req->url, 5.0);
     double end = current_timestamp();
     log_info("request url: %s cost: %f", req->url, end - start);
 }
