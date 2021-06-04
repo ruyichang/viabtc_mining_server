@@ -148,7 +148,7 @@ static void on_job(nw_job_entry *entry, void *privdata)
 {
     double start = current_timestamp();
     struct request_context *req = entry->request;
-    entry->reply = http_request(req->url, 2.0);
+    entry->reply = http_request(req->url, 5.0);
     double end = current_timestamp();
     log_info("request url: %s cost: %f", req->url, end - start);
 }
