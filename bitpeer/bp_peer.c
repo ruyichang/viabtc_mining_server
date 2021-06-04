@@ -271,7 +271,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     json_object_set_new(message, "curtime", json_integer(curtime));
     json_object_set_new(message, "hash", json_string(hash));
     json_object_set_new(message, "prevhash", json_string(previous_has));
-    json_object_set_new(message, "magic", json_integer(4151801719));
+    json_object_set_new(message, "magic", json_string("0xF7777777u"));
 
     sdsfree(previous_has);
 
