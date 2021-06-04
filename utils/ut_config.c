@@ -9,22 +9,14 @@
 int parse_inetv4_addr(const char *str, struct sockaddr_in *addr)
 {
     char *tmp = strdup(str);
-
-    printf("[parse_inetv4_addr] tmp:[%s], str:[%s]\n", tmp, str);
-
-    char *ip = strtok(tmp, ":");
-//    char *ip = strtok(tmp, ": \t");
+    char *ip = strtok(tmp, ": \t");
     if (ip == NULL) {
         return -__LINE__;
     }
-    char *port = strtok(NULL, ":");
-//    char *port = strtok(NULL, ": \t");
+    char *port = strtok(NULL, ": \t");
     if (port == NULL) {
         return -__LINE__;
     }
-//    char *ip = "172.17.0.4";
-//    char *port ="5555";
-
     memset(addr, 0, sizeof(struct sockaddr_in));
     addr->sin_family = AF_INET;
     addr->sin_port = htons((uint16_t)atoi(port));
@@ -32,8 +24,6 @@ int parse_inetv4_addr(const char *str, struct sockaddr_in *addr)
         return -__LINE__;
     }
     free(tmp);
-
-    printf("[parse_inetv4_addr] ip:[%s], port:[%s]\n", ip, port);
 
     return 0;
 }
