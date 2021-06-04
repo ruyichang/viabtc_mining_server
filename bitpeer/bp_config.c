@@ -46,10 +46,10 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
     printf("[load_cfg_jobmaster]2.\n");
 
     // test logs
-    char *str = json_dumps(settings.jobmaster_cfg, 0);
-    printf("[load_cfg_jobmaster]load cfg jobmaster fail, jobmaster_cfg: %s", str);
-    free(str);
-    
+    char *str_ = json_dumps(settings.jobmaster_cfg, 0);
+    printf("[load_cfg_jobmaster]load cfg jobmaster fail, jobmaster_cfg: %s", str_);
+    free(str_);
+
     return 0;
 }
 
