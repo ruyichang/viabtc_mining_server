@@ -22,7 +22,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
     log_error("------test_on_cron_check----sendto---begin--");
 
-    char *buf = "testtesttest";
+    char *buf = "{\"height\":123123,\"curtime\":1622787234,\"hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"prevhash\":\"0000000000000000000000000000000000000000000000000000000000000000\"}";
     auto buf_size = sizeof(buf);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
