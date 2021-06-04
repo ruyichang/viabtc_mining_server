@@ -22,8 +22,24 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
     log_error("------test_on_cron_check----sendto---begin--");
 
-    char *buf = "{\"height\":123123,\"curtime\":1622787234,\"hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"prevhash\":\"0000000000000000000000000000000000000000000000000000000000000000\"}";
-    auto buf_size = sizeof(buf);
+
+    json_t *message = json_object();
+    json_object_set_new(message, "height", json_integer(height));
+    json_object_set_new(message, "curtime", json_integer(curtime));
+    json_object_set_new(message, "hash", json_string(hash));
+    json_object_set_new(message, "prevhash", json_string(previous_has));
+
+    char *message_data = json_dumps(message, 0);
+    if (message_data == NULL) {
+        log_error("json_dumps fail");
+        json_decref(message);
+        return -__LINE__;
+    }
+    log_debug("block notify msg: %s", message_data);
+
+
+    auto buf_size =     strlen(message_data);
+
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
@@ -36,7 +52,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         log_error("--send to--:%s", str);
         //------------ logs the ip:port -------------end//
 
-        int ret = sendto(sockfd, buf, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+        int ret = sendto(sockfd, message_data, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
             char errmsg[100];
             snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
