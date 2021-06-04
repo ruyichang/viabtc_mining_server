@@ -271,6 +271,7 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     json_object_set_new(message, "curtime", json_integer(curtime));
     json_object_set_new(message, "hash", json_string(hash));
     json_object_set_new(message, "prevhash", json_string(previous_has));
+    json_object_set_new(message, "magic", json_integer(4151801719));
 
     sdsfree(previous_has);
 
@@ -284,38 +285,25 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     log_debug("block notify msg: %s", message_data);
     log_error("----------------block notify msg: %s", message_data);
 
-    rpc_pkg pkg;
-    memset(&pkg, 0, sizeof(pkg));
-    pkg.command = CMD_HEIGHT_UPDATE;
-    pkg.pkg_type = RPC_PKG_TYPE_PUSH;
-    pkg.body_size = strlen(message_data);
-    pkg.body = message_data;
-
-    void *pkg_data;
-    uint32_t pkg_size;
-    int ret = rpc_pack(&pkg, &pkg_data, &pkg_size);
-    if (ret < 0) {
-        log_error("rpc_pack fail: %d", ret);
-        free(message_data);
-        return -__LINE__;
-    }
-    free(message_data);
-
+    auto message_size = strlen(message_data);
     log_error("settings.jobmaster->count:%d", settings.jobmaster->count);
 
     for (int sendtime = 0; sendtime < UDP_TIMES; sendtime++) {
         for (size_t i = 0; i < settings.jobmaster->count; ++i) {
             struct sockaddr_in *addr = &settings.jobmaster->arr[i];
-            int ret = sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+            int ret = sendto(sockfd, message_data, message_size, 0, (struct sockaddr *) addr, sizeof(*addr));
             if (ret < 0) {
                 char errmsg[100];
                 snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
                 log_error("errmsg:%s", errmsg);
+                free(message_data);
+
                 return -1;
             }
             log_error("------send ret---------:%d", ret);
         }
     }
+    free(message_data);
 
     return 0;
 }
