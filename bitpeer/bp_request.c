@@ -118,18 +118,18 @@ static json_t *http_request(const char *url, double timeout)
         goto cleanup;
     }
 
-    json_t *error;
-    error = json_object_get(reply, "error");
-    if (!error) {
-        log_fatal("reply error: %s: %s", url, reply_str);
-        goto cleanup;
-    }
-
-    json_t *message = json_object_get(error, "message");
-    if (!message || strcmp(json_string_value(message), "ok") != 0) {
-        log_fatal("reply error: %s: %s", url, reply_str);
-        goto cleanup;
-    }
+//    json_t *error;
+//    error = json_object_get(reply, "error");
+//    if (!error) {
+//        log_fatal("reply error: %s: %s", url, reply_str);
+//        goto cleanup;
+//    }
+//
+//    json_t *message = json_object_get(error, "message");
+//    if (!message || strcmp(json_string_value(message), "ok") != 0) {
+//        log_fatal("reply error: %s: %s", url, reply_str);
+//        goto cleanup;
+//    }
 
     result = json_object_get(reply, "result");
     json_incref(result);
@@ -167,7 +167,8 @@ static void on_job_cleanup(nw_job_entry *entry)
 
 int init_jobmaster_config(void)
 {
-    json_t *data = http_request(settings.jobmaster_url, 2.0);
+    json_t *data = http_request(settings.jobmaster_url, 5.0);
+    printf("init_jobmaster_config  --1");
     if (data == NULL)
         return -__LINE__;
     if (settings.jobmaster_cfg)

@@ -23,8 +23,6 @@ static int load_cfg_jobmaster(json_t *root, const char *key) {
         return -__LINE__;
     }
 
-    printf("[load_cfg_jobmaster]load cfg jobmaster_url fail, jobmaster_url: %s\n", settings.jobmaster_url);
-
     ret = init_jobmaster_config();
     if (ret < 0) {
         return -__LINE__;
