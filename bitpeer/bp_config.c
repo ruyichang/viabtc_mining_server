@@ -32,7 +32,7 @@ static int load_cfg_jobmaster(json_t *root, const char *key) {
     printf("[load_cfg_jobmaster]1.\n");
 
     char *_str = json_dumps(settings.jobmaster_cfg, 0);
-    log_error("load cfg jobmaster fail, jobmaster_cfg: %s", _str);
+    log_error("jobmaster_cfg: %s", _str);
     free(_str);
 
     settings.jobmaster = malloc(sizeof(inetv4_list));
