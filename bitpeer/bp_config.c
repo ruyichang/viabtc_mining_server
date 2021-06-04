@@ -8,8 +8,7 @@
 
 struct settings settings;
 
-static void inetv4_list_free(inetv4_list *list)
-{
+static void inetv4_list_free(inetv4_list *list) {
     if (list) {
         if (list->arr)
             free(list->arr);
@@ -17,8 +16,7 @@ static void inetv4_list_free(inetv4_list *list)
     }
 }
 
-static int load_cfg_jobmaster(json_t *root, const char *key)
-{
+static int load_cfg_jobmaster(json_t *root, const char *key) {
     int ret = read_cfg_str(root, key, &settings.jobmaster_url, NULL);
     if (ret < 0) {
         printf("[load_cfg_jobmaster]load cfg jobmaster_url fail.\n");
@@ -53,8 +51,7 @@ static int load_cfg_jobmaster(json_t *root, const char *key)
     return 0;
 }
 
-int do_load_config(json_t *root)
-{
+int do_load_config(json_t *root) {
     int ret;
     ret = load_cfg_process(root, "process", &settings.process);
     if (ret < 0) {
@@ -92,6 +89,9 @@ int do_load_config(json_t *root)
         return -__LINE__;
     }
 
+    char *str = json_dumps(settings.request_auth, 0);
+    printf("----------- request_auth: %s\n", str);
+    free(str);
     //------------------------------------------------
 //    load jobmaster directly from cfg file
 //    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
@@ -166,8 +166,7 @@ int do_load_config(json_t *root)
     return 0;
 }
 
-int load_config(const char *path)
-{
+int load_config(const char *path) {
     json_error_t error;
     json_t *root = json_load_file(path, 0, &error);
     if (root == NULL) {
