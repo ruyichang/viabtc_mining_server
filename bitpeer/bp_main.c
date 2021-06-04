@@ -24,10 +24,10 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
 
     json_t *message = json_object();
-    json_object_set_new(message, "height", json_integer(height));
-    json_object_set_new(message, "curtime", json_integer(curtime));
-    json_object_set_new(message, "hash", json_string(hash));
-    json_object_set_new(message, "prevhash", json_string(previous_has));
+    json_object_set_new(message, "height", json_integer(123123));
+    json_object_set_new(message, "curtime", json_integer(1622787234));
+    json_object_set_new(message, "hash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
+    json_object_set_new(message, "prevhash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
