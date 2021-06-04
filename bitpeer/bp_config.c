@@ -89,9 +89,7 @@ int do_load_config(json_t *root) {
         return -__LINE__;
     }
 
-    char *str = json_dumps(settings.request_auth, 0);
-    printf("----------- request_auth: %s\n", str);
-    free(str);
+    printf("----------- request_auth: %s\n", settings.request_auth);
     //------------------------------------------------
 //    load jobmaster directly from cfg file
 //    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
