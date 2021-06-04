@@ -7,6 +7,7 @@
 # define _BP_PEER_H_
 
 # define HEX_ZERO "0000000000000000000000000000000000000000000000000000000000000000"
+# define UDP_TIMES 3
 
 int init_peer(void);
 int update_peer(void);

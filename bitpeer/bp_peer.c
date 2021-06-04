@@ -303,17 +303,18 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
 
     log_error("settings.jobmaster->count:%d", settings.jobmaster->count);
 
-
-    for (size_t i = 0; i < settings.jobmaster->count; ++i) {
-        struct sockaddr_in *addr = &settings.jobmaster->arr[i];
-        int ret = sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
-        if (ret < 0) {
-            char errmsg[100];
-            snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
-            log_error("errmsg:%s", errmsg);
-            return -1;
+    for ( int sendtime = 0; sendtime < UDP_TIMES; sendtime++ ){
+        for (size_t i = 0; i < settings.jobmaster->count; ++i) {
+            struct sockaddr_in *addr = &settings.jobmaster->arr[i];
+            int ret = sendto(sockfd, pkg_data, pkg_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+            if (ret < 0) {
+                char errmsg[100];
+                snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
+                log_error("errmsg:%s", errmsg);
+                return -1;
+            }
+            log_error("------send ret---------:%d", ret);
         }
-        log_error("------send ret---------:%d", ret);
     }
 
     return 0;
