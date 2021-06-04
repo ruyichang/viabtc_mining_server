@@ -104,7 +104,7 @@ static void on_job_cleanup(nw_job_entry *entry)
     free(req);
 }
 
-int init_jobmaster_config(void)
+int xinit_jobmaster_config(void)
 {
     printf("[init_jobmaster_config]--1.\n");
 
