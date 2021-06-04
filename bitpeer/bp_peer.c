@@ -355,9 +355,6 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
     void *p = msg;
     size_t left = size;
 
-    log_info("peer: %s, recv all header: %s", nw_sock_human_addr(&ses->peer_addr), p);
-
-
     uint64_t count;
     ERR_RET_LN(unpack_varint_le(&p, &left, &count));
     if (count != 1)
@@ -368,8 +365,17 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         uint64_t tx_count;
         ERR_RET_LN(unpack_buf(&p, &left, header, 80));
         ERR_RET_LN(unpack_varint_le(&p, &left, &tx_count));
+        
+        char prev_hash[32];
+        memcpy(prev_hash, header + 4, 32);
+        reverse_mem(prev_hash, 32);
+        sds previoushex = bin2hex(prev_hash, 32);
+        log_info("+++++previoushex: %s", previoushex);
+        sdsfress(previoushex);
 
-        log_info("peer: %s, recv all header unpacked: %s", nw_sock_human_addr(&ses->peer_addr), header);
+        char current_bits[4];
+        memcpy(prev_hash, header + 4 + 32 + 32 + 4, 4);
+        log_info("+++++previoushex: %s", current_bits);
 
 
         char hash[32];
