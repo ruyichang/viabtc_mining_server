@@ -28,7 +28,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     json_object_set_new(message, "curtime", json_integer(1622787234));
     json_object_set_new(message, "hash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
     json_object_set_new(message, "prevhash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
-    json_object_set_new(message, "magic", json_integer(4151801719));
+    json_object_set_new(message, "magic", json_string(MAGIC_NUMBER));
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
