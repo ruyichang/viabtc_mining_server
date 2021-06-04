@@ -53,21 +53,21 @@ static json_t *http_request(const char *url, double timeout)
 
     printf("http_request -- 3. \n");
 
-    json_t *error;
-    error = json_object_get(reply, "error");
-    if (!error) {
-        log_fatal("[\"error\"]reply error: %s: %s", url, reply_str);
-        goto cleanup;
-    }
-
-    printf("http_request -- 4. \n");
-
-    json_t *message = json_object_get(error, "message");
-    if (!message || strcmp(json_string_value(message), "ok") != 0) {
-        log_fatal("[\"message\"]reply error: %s: %s", url, reply_str);
-        goto cleanup;
-    }
-    printf("http_request -- 5. \n");
+//    json_t *error;
+//    error = json_object_get(reply, "error");
+//    if (!error) {
+//        log_fatal("[\"error\"]reply error: %s: %s", url, reply_str);
+//        goto cleanup;
+//    }
+//
+//    printf("http_request -- 4. \n");
+//
+//    json_t *message = json_object_get(error, "message");
+//    if (!message || strcmp(json_string_value(message), "ok") != 0) {
+//        log_fatal("[\"message\"]reply error: %s: %s", url, reply_str);
+//        goto cleanup;
+//    }
+//    printf("http_request -- 5. \n");
 
 
     result = json_object_get(reply, "result");
