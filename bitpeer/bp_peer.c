@@ -287,7 +287,7 @@ static int send_block_nitify(sds hash, sds pre_hash, int height, uint32_t curtim
     log_error("----------------block notify msg: %s", message_data);
 
     auto message_size = strlen(message_data);
-    log_error("settings.jobmaster->count:%d", settings.jobmaster->count);
+    log_error("settings.jobmaster->count:%ld", settings.jobmaster->count);
 
     for (int sendtime = 0; sendtime < UDP_TIMES; sendtime++) {
         for (size_t i = 0; i < settings.jobmaster->count; ++i) {
@@ -387,9 +387,9 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         log_info("+++++previoushex: %s", previoushex);
 
         //get bits
-        uint32_t current_bits_
-        ERR_RET_LN(unpack_uint32_le(&p - 80, 5, &current_bits_));
-        log_info("+++++previoushex: %d", current_bits_);
+//        uint32_t current_bits_
+//        ERR_RET_LN(unpack_uint32_le(&p - 80, 5, &current_bits_));
+//        log_info("+++++previoushex: %d", current_bits_);
 
 
         char current_bits[4];
