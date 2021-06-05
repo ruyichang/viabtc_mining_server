@@ -262,7 +262,7 @@ static int send_block(nw_ses *ses, void *block, size_t size) {
     return send_p2pmsg(ses, "block", block, size);
 }
 
-static int send_block_nitify(sds hash, sds pre_hash, int height, uint32_t curtime) {
+static int send_block_nitify(sds hash, sds pre_hash, sds bits, int height, uint32_t curtime) {
     //get previous hash
     sds previous_has = bin2hex(last_send_hash, 32);
 
@@ -272,6 +272,7 @@ static int send_block_nitify(sds hash, sds pre_hash, int height, uint32_t curtim
     json_object_set_new(message, "hash", json_string(hash));
 //    json_object_set_new(message, "prevhash", json_string(previous_has));
     json_object_set_new(message, "prevhash", json_string(pre_hash));
+    json_object_set_new(message, "bits", json_string(bits));
     json_object_set_new(message, "magic", json_string(MAGIC_NUMBER));
 
     sdsfree(previous_has);
@@ -386,18 +387,11 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         sds previoushex = bin2hex(prev_hash, 32);
         log_info("+++++previoushex: %s", previoushex);
 
-        //get bits
-//        uint32_t current_bits_
-//        ERR_RET_LN(unpack_uint32_le(&p - 80, 5, &current_bits_));
-//        log_info("+++++previoushex: %d", current_bits_);
-
-
         char current_bits[4];
         memcpy(current_bits, header + 4 + 32 + 32 + 4, 4);
         reverse_mem(current_bits, 4);
         sds sds_current_bits = bin2hex(current_bits, 4);
         log_info("+++++sds_current_bits: %s", sds_current_bits);
-        sdsfree(sds_current_bits);
 
 
         char hash[32];
@@ -412,6 +406,8 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
             double diff = get_block_difficulty(hash_r);
             if (diff < diff_current) {
                 sdsfree(hex);
+                sdsfree(previoushex);
+                sdsfree(sds_current_bits);
                 return -__LINE__;
             }
 
@@ -422,13 +418,14 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
                 if (curtime <= block_time) {
                     curtime = block_time + 1;
                 }
-                int ret = send_block_nitify(hex, previoushex, height, curtime);
+                int ret = send_block_nitify(hex, previoushex, sds_current_bits, height, curtime);
                 //store
                 memcpy(last_send_hash, hash_r, sizeof(hash_r));
                 if (ret < 0) {
                     log_error("send_block_nitify fail: %d", ret);
                     sdsfree(hex);
                     sdsfree(previoushex);
+                    sdsfree(sds_current_bits);
                     return -__LINE__;
                 }
                 notify_height = height;
@@ -436,6 +433,7 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         } else if (best_height > 0) {
             sdsfree(hex);
             sdsfree(previoushex);
+            sdsfree(sds_current_bits);
             continue;
         }
 
@@ -448,6 +446,7 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         sdsfree(key);
         sdsfree(hex);
         sdsfree(previoushex);
+        sdsfree(sds_current_bits);
     }
 
     return 0;
@@ -554,7 +553,6 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
     reverse_mem(current_bits, 4);
     sds sds_current_bits = bin2hex(current_bits, 4);
     log_info("++++process_block+sds_current_bits: %s", sds_current_bits);
-    sdsfree(sds_current_bits);
 
     char hash_r[32];
     memcpy(hash_r, hash, 32);
@@ -568,6 +566,7 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
     if (diff < diff_current) {
         sdsfree(hex);
         sdsfree(previoushex);
+        sdsfree(sds_current_bits);
         return 0;
     }
 
@@ -577,12 +576,14 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
     if (unpack_varint_le(&p, &left, &tx_count) < 0) {
         sdsfree(hex);
         sdsfree(previoushex);
+        sdsfree(sds_current_bits);
         return -__LINE__;
     }
     int height = get_height_from_coinbase(p, left);
     if (height < 0) {
         sdsfree(hex);
         sdsfree(previoushex);
+        sdsfree(sds_current_bits);
         return -__LINE__;
     }
 
@@ -599,13 +600,14 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
         if (curtime <= block_time) {
             curtime = block_time + 1;
         }
-        int ret = send_block_nitify(hex, previoushex, best_height, curtime);
+        int ret = send_block_nitify(hex, previoushex, sds_current_bits, best_height, curtime);
         //store
         memcpy(last_send_hash, hash_r, sizeof(hash_r));
         if (ret < 0) {
             log_error("send_block_nitify fail: %d", ret);
             sdsfree(hex);
             sdsfree(previoushex);
+            sdsfree(sds_current_bits);
             return -__LINE__;
         }
         notify_height = best_height;
@@ -614,6 +616,8 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
         broadcast_block_update(msg, size);
     }
     sdsfree(hex);
+    sdsfree(previoushex);
+    sdsfree(sds_current_bits);
 
     return 0;
 }

@@ -164,8 +164,8 @@ int main(int argc, char *argv[]) {
     nw_timer_set(&cron_timer, 0.1, true, on_cron_check, NULL);
     nw_timer_start(&cron_timer);
 
-    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
-    nw_timer_start(&test_cron_timer);
+//    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
+//    nw_timer_start(&test_cron_timer);
 
 
     log_vip("server start");
