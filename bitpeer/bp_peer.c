@@ -262,7 +262,7 @@ static int send_block(nw_ses *ses, void *block, size_t size) {
     return send_p2pmsg(ses, "block", block, size);
 }
 
-static int send_block_nitify(sds hash, int height, uint32_t curtime) {
+static int send_block_nitify(sds hash, sds pre_hash, int height, uint32_t curtime) {
     //get previous hash
     sds previous_has = bin2hex(last_send_hash, 32);
 
@@ -270,7 +270,8 @@ static int send_block_nitify(sds hash, int height, uint32_t curtime) {
     json_object_set_new(message, "height", json_integer(height));
     json_object_set_new(message, "curtime", json_integer(curtime));
     json_object_set_new(message, "hash", json_string(hash));
-    json_object_set_new(message, "prevhash", json_string(previous_has));
+//    json_object_set_new(message, "prevhash", json_string(previous_has));
+    json_object_set_new(message, "prevhash", json_string(pre_hash));
     json_object_set_new(message, "magic", json_string(MAGIC_NUMBER));
 
     sdsfree(previous_has);
@@ -351,6 +352,19 @@ static int process_inv(nw_ses *ses, void *msg, size_t size) {
     return 0;
 }
 
+
+/*
+字段尺寸	描述	数据类型	说明
+4	version	uint32_t	Block版本信息，基于创建该block的软件版本
+32	prev_block	char[32]	该block前一block的散列
+32	merkle_root	char[32]	与该block相关的全部交易之散列(Merkle树)
+4	timestamp	uint32_t	记录block创建时间的时间戳
+4	bits	uint32_t	创建block的计算难度
+4	nonce	uint32_t	用于生成block的临时数据
+1	txn_count	uint8_t	交易数，这个值总是0
+
+*/
+
 static int process_headers(nw_ses *ses, void *msg, size_t size) {
     void *p = msg;
     size_t left = size;
@@ -371,11 +385,19 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         reverse_mem(prev_hash, 32);
         sds previoushex = bin2hex(prev_hash, 32);
         log_info("+++++previoushex: %s", previoushex);
-        sdsfree(previoushex);
+
+        //get bits
+        uint32_t current_bits_
+        ERR_RET_LN(unpack_uint32_le(&p - 80, 5, &current_bits_));
+        log_info("+++++previoushex: %d", current_bits_);
+
 
         char current_bits[4];
-        memcpy(prev_hash, header + 4 + 32 + 32 + 4, 4);
-        log_info("+++++previoushex: %s", current_bits);
+        memcpy(current_bits, header + 4 + 32 + 32 + 4, 4);
+        reverse_mem(current_bits, 4);
+        sds sds_current_bits = bin2hex(current_bits, 4);
+        log_info("+++++sds_current_bits: %s", sds_current_bits);
+        sdsfree(sds_current_bits);
 
 
         char hash[32];
@@ -400,18 +422,20 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
                 if (curtime <= block_time) {
                     curtime = block_time + 1;
                 }
-                int ret = send_block_nitify(hex, height, curtime);
+                int ret = send_block_nitify(hex, previoushex, height, curtime);
                 //store
                 memcpy(last_send_hash, hash_r, sizeof(hash_r));
                 if (ret < 0) {
                     log_error("send_block_nitify fail: %d", ret);
                     sdsfree(hex);
+                    sdsfree(previoushex);
                     return -__LINE__;
                 }
                 notify_height = height;
             }
         } else if (best_height > 0) {
             sdsfree(hex);
+            sdsfree(previoushex);
             continue;
         }
 
@@ -423,6 +447,7 @@ static int process_headers(nw_ses *ses, void *msg, size_t size) {
         }
         sdsfree(key);
         sdsfree(hex);
+        sdsfree(previoushex);
     }
 
     return 0;
@@ -517,6 +542,20 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
         sdsfree(key);
     }
 
+    char prev_hash[32];
+    memcpy(prev_hash, msg + 4, 32);
+    reverse_mem(prev_hash, 32);
+    sds previoushex = bin2hex(prev_hash, 32);
+    log_info("+++++process_block previoushex: %s", previoushex);
+
+
+    char current_bits[4];
+    memcpy(current_bits, msg + 4 + 32 + 32 + 4, 4);
+    reverse_mem(current_bits, 4);
+    sds sds_current_bits = bin2hex(current_bits, 4);
+    log_info("++++process_block+sds_current_bits: %s", sds_current_bits);
+    sdsfree(sds_current_bits);
+
     char hash_r[32];
     memcpy(hash_r, hash, 32);
     reverse_mem(hash_r, sizeof(hash_r));
@@ -528,6 +567,7 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
     double diff = get_block_difficulty(hash_r);
     if (diff < diff_current) {
         sdsfree(hex);
+        sdsfree(previoushex);
         return 0;
     }
 
@@ -536,11 +576,13 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
     uint64_t tx_count;
     if (unpack_varint_le(&p, &left, &tx_count) < 0) {
         sdsfree(hex);
+        sdsfree(previoushex);
         return -__LINE__;
     }
     int height = get_height_from_coinbase(p, left);
     if (height < 0) {
         sdsfree(hex);
+        sdsfree(previoushex);
         return -__LINE__;
     }
 
@@ -557,12 +599,13 @@ static int process_block(nw_ses *ses, void *msg, size_t size) {
         if (curtime <= block_time) {
             curtime = block_time + 1;
         }
-        int ret = send_block_nitify(hex, best_height, curtime);
+        int ret = send_block_nitify(hex, previoushex, best_height, curtime);
         //store
         memcpy(last_send_hash, hash_r, sizeof(hash_r));
         if (ret < 0) {
             log_error("send_block_nitify fail: %d", ret);
             sdsfree(hex);
+            sdsfree(previoushex);
             return -__LINE__;
         }
         notify_height = best_height;
