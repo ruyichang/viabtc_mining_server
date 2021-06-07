@@ -356,7 +356,7 @@ int load_cfg_inetv4_list_direct(json_t *node, inetv4_list *cfg)
         if (!json_is_string(row)) {
             return -__LINE__;
         }
-        printf("json_string_value(row):%s\n", json_string_value(row));
+//        printf("json_string_value(row):%s\n", json_string_value(row));
         ERR_RET(parse_inetv4_addr(json_string_value(row), &cfg->arr[i]));
     }
 
