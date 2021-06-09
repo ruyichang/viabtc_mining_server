@@ -5,6 +5,12 @@ import time
 import json
 import requests
 
+#clear InsecureRequestWarning when exec
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+# America:US
+# China: CN
 country_list = ['CN']
 region_list = ['']
 

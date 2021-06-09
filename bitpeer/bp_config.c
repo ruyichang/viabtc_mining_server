@@ -27,11 +27,6 @@ static int load_cfg_jobmaster(json_t *root, const char *key) {
     if (ret < 0) {
         return -__LINE__;
     }
-    printf("[load_cfg_jobmaster]1.\n");
-
-    char *_str = json_dumps(settings.jobmaster_cfg, 0);
-    log_error("jobmaster_cfg: %s", _str);
-    free(_str);
 
     settings.jobmaster = malloc(sizeof(inetv4_list));
     ret = load_cfg_inetv4_list_direct(settings.jobmaster_cfg, settings.jobmaster);
@@ -41,7 +36,6 @@ static int load_cfg_jobmaster(json_t *root, const char *key) {
         free(str);
         return -__LINE__;
     }
-    printf("[load_cfg_jobmaster]2.\n");
 
     // test logs
     char *str_ = json_dumps(settings.jobmaster_cfg, 0);

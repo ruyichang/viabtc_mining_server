@@ -30,6 +30,9 @@
         ],
         "max_pkg_size": 102400
     },
+    "jobmaster": [
+        "172.17.0.4:5555"
+    ],
     "peer_config_path": "peer.json",
     "reconnect_timeout": 60,
     "broadcast_limit": 20,
@@ -38,6 +41,6 @@
     "peer_list_url": "https://bitnodes.io/api/v1/snapshots/latest/",
     "start_string": "f9beb4d9",
     "jobmaster_update_interval": 30,
-    "request_auth": "xxxxxxxxxxxxx",
-    "jobmaster_url": "http://127.0.0.1:8081/jobmaster"
+    "jobmaster_url": "bitpeer.blockin.net",
+    "request_auth": "xxxxxxxxxxxxx"
 }
