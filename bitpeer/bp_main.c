@@ -39,14 +39,24 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         json_decref(message);
         return -__LINE__;
     }
-
     auto buf_size = strlen(message_data);
 
+    log_error("------test_on_cron_check--1--");
     char *msg_send_buf = malloc(4 + 2 + buf_size); //magic + len +data
+    log_error("------test_on_cron_check--2--");
+
     memset(msg_send_buf, 0, 4 + 2 + buf_size);
+    log_error("------test_on_cron_check--3--");
+
     memcpy(msg_send_buf, MAGIC_NUMBER, 4);
+    log_error("------test_on_cron_check--4--");
+
     memcpy(msg_send_buf + 4, buf_size, 2);
+    log_error("------test_on_cron_check--5--");
+
     memcpy(msg_send_buf + 6, message_data, buf_size);
+    log_error("------test_on_cron_check--6--");
+
 
 
     log_debug("block notify msg: %s", msg_send_buf);
