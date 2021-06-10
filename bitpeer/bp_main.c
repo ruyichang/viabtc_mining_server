@@ -49,11 +49,11 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
 
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
-    int ret = snprintf(msg_send_buf, sizeof(msg_send_buf) ,"%ld%02d%s\n", magic_, buf_size, message_data);
+    int ret = snprintf(msg_send_buf, s4 + 2 + buf_size ,"%ld%02d%s\n", magic_, buf_size, message_data);
 
     log_error("------test_on_cron_check--3--");
 
-    log_debug("block notify msg: %s", msg_send_buf);
+    log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
