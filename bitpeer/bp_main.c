@@ -49,18 +49,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     log_error("------test_on_cron_check--2--");
 
     memset(msg_send_buf, 0, sizeof (magic_) + 2 + buf_size);
-    log_error("------test_on_cron_check--3--");
-
-    memcpy(msg_send_buf, magic_, sizeof (magic_));
-    log_error("------test_on_cron_check--4--");
-
-    memcpy(msg_send_buf + sizeof (magic_), buf_size, 2);
-    log_error("------test_on_cron_check--5--");
-
-    memcpy(msg_send_buf + sizeof (magic_)+2, message_data, buf_size);
-    log_error("------test_on_cron_check--6--");
-
-
+    int ret = sprintf(msg_send_buf,"%ld%02d%s\r\n", magic_, buf_size, message_data);
 
     log_debug("block notify msg: %s", msg_send_buf);
 
@@ -73,7 +62,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->sin_port));
         log_error("--send to--:%s", str);
 
-        int ret = sendto(sockfd, msg_send_buf, buf_size + 4 + 2, 0, (struct sockaddr *) addr, sizeof(*addr));
+        int ret = sendto(sockfd, msg_send_buf, sizeof (magic_) + 2 + buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
             char errmsg[100];
             snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
