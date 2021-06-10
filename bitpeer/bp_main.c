@@ -48,7 +48,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     memset(msg_send_buf, 0, 4 + 2 + buf_size);
     log_error("------test_on_cron_check--3--");
 
-    memcpy(msg_send_buf, MAGIC_NUMBER, 4);
+    memcpy(msg_send_buf, (uint32_t *)MAGIC_NUMBER, 4);
     log_error("------test_on_cron_check--4--");
 
     memcpy(msg_send_buf + 4, buf_size, 2);
