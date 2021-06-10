@@ -26,10 +26,11 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     json_t *message = json_object();
     json_object_set_new(message, "height", json_integer(123123));
     json_object_set_new(message, "curtime", json_integer(1622787234));
-    json_object_set_new(message, "hash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
-    json_object_set_new(message, "prevhash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
+    json_object_set_new(message, "hash",
+                        json_string("0000000000000000000000000000000000000000000000000000000000000000"));
+    json_object_set_new(message, "prevhash",
+                        json_string("0000000000000000000000000000000000000000000000000000000000000000"));
     json_object_set_new(message, "bits", json_string("0xF7777777u"));
-    json_object_set_new(message, "magic", json_string(MAGIC_NUMBER));
 
 
     char *message_data = json_dumps(message, 0);
@@ -40,23 +41,25 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     }
     log_debug("block notify msg: %s", message_data);
 
+    auto buf_size = strlen(message_data);
 
-    auto buf_size =     strlen(message_data);
-    message_data[buf_size] = "\n";
+    char *msg_send_buf = malloc(4 + 2 + buf_size); //magic + len +data
+    memset(msg_send_buf, 0);
+    memcpy(msg_send_buf, MAGIC_NUMBER, 4);
+    memcpy(msg_send_buf + 4, buf_size, 2);
+    memcpy(msg_send_buf + 6, message_data, buf_size);
 
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
 
-        //------------ logs the ip:port-------------begin//
         char str[128];
         char ip[46];
         inet_ntop(2, &addr->sin_addr, ip, sizeof(ip));
         snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->sin_port));
         log_error("--send to--:%s", str);
-        //------------ logs the ip:port -------------end//
 
-        int ret = sendto(sockfd, message_data, buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+        int ret = sendto(sockfd, msg_send_buf, buf_size + 4 + 2, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
             char errmsg[100];
             snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
@@ -167,8 +170,8 @@ int main(int argc, char *argv[]) {
     nw_timer_set(&cron_timer, 0.1, true, on_cron_check, NULL);
     nw_timer_start(&cron_timer);
 
-//    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
-//    nw_timer_start(&test_cron_timer);
+    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
+    nw_timer_start(&test_cron_timer);
 
 
     log_vip("server start");
