@@ -54,7 +54,11 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
     size_t left = 4 + 2 + buf_size +1;
     pack_uint32_le(&msg_send_buf, &left, MAGIC_NUMBER);
+    log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
+
     pack_uint32_le(&msg_send_buf, &left, buf_size);
+    log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
+
     pack_varstr(&msg_send_buf, &left, message, buf_size);
     log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
 
