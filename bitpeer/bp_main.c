@@ -49,7 +49,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
 
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
-    int ret = snprintf(msg_send_buf, s4 + 2 + buf_size ,"%ld%02d%s\n", magic_, buf_size, message_data);
+    int ret = snprintf(msg_send_buf, 4 + 2 + buf_size ,"%ld%02d%s\n", magic_, buf_size, message_data);
 
     log_error("------test_on_cron_check--3--");
 
