@@ -18,6 +18,9 @@ nw_timer test_cron_timer;
 static int sockfd;
 
 static void test_on_cron_check(nw_timer *timer, void *data) {
+
+//    uint32_t magic_ = 4133906022;
+    uint32_t magic_ = 0xF6666666u;
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
     log_error("------test_on_cron_check----sendto---begin--");
@@ -48,7 +51,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     memset(msg_send_buf, 0, 4 + 2 + buf_size);
     log_error("------test_on_cron_check--3--");
 
-    memcpy(msg_send_buf, (uint32_t *)MAGIC_NUMBER, 4);
+    memcpy(msg_send_buf, magic_, 4);
     log_error("------test_on_cron_check--4--");
 
     memcpy(msg_send_buf + 4, buf_size, 2);
