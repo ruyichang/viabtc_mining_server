@@ -284,11 +284,12 @@ static int send_block_nitify(sds hash, sds pre_hash, sds bits, int height, uint3
         return -__LINE__;
     }
     json_decref(message);
-    log_debug("block notify msg: %s", message_data);
-    log_error("----------------block notify msg: %s", message_data);
 
     auto message_size = strlen(message_data);
-    log_error("settings.jobmaster->count:%ld", settings.jobmaster->count);
+    log_debug("settings.jobmaster->count:%ld", settings.jobmaster->count);
+
+    message_data[message_size] = "\n":
+    log_debug("----------------block notify msg: %s", message_data);
 
     for (int sendtime = 0; sendtime < UDP_TIMES; sendtime++) {
         for (size_t i = 0; i < settings.jobmaster->count; ++i) {
