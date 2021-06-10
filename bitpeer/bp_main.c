@@ -64,7 +64,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->sin_port));
         log_error("--send to--:%s", str);
 
-        int ret = sendto(sockfd, msg_send_buf, sizeof (magic_) + 2 + buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+        int ret = sendto(sockfd, msg_send_buf, 14 +buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
             char errmsg[100];
             snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
