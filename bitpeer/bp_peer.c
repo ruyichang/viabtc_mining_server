@@ -263,6 +263,7 @@ static int send_block(nw_ses *ses, void *block, size_t size) {
 }
 
 static int send_block_nitify(sds hash, sds pre_hash, sds bits, int height, uint32_t curtime) {
+    uint32_t magic_ = 0xFFFFu;
     //get previous hash
     sds previous_has = bin2hex(last_send_hash, 32);
 
@@ -286,15 +287,19 @@ static int send_block_nitify(sds hash, sds pre_hash, sds bits, int height, uint3
     json_decref(message);
 
     auto message_size = strlen(message_data);
-    log_debug("settings.jobmaster->count:%ld", settings.jobmaster->count);
-
-//    message_data[message_size] = "\n";
     log_debug("----------------block notify msg: %s", message_data);
 
+    //pack : magic + len +data
+    char msg_send_buf[4 + 2 + message_size + 1];
+    memset(msg_send_buf, 0, 4 + 2 + message_size + 1);
+    snprintf(msg_send_buf, 4 + 2 + message_size + 1, "%x%x%s\n", magic_, message_size, message_data);
+    log_debug("msg_send_buf: %s", msg_send_buf);
+
+    // UDP send msg
     for (int sendtime = 0; sendtime < UDP_TIMES; sendtime++) {
         for (size_t i = 0; i < settings.jobmaster->count; ++i) {
             struct sockaddr_in *addr = &settings.jobmaster->arr[i];
-            int ret = sendto(sockfd, message_data, message_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+            int ret = sendto(sockfd, msg_send_buf, 4 + 2 + message_size, 0, (struct sockaddr *) addr, sizeof(*addr));
             if (ret < 0) {
                 char errmsg[100];
                 snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));

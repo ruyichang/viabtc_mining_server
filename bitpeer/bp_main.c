@@ -50,6 +50,8 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
     int ret = snprintf(msg_send_buf, 4 + 2 + buf_size + 1, "%x%x%s\n", magic_, buf_size, message_data);
 
+    log_debug("msg_send_buf: %s", msg_send_buf);
+
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
 
@@ -168,8 +170,8 @@ int main(int argc, char *argv[]) {
     nw_timer_set(&cron_timer, 0.1, true, on_cron_check, NULL);
     nw_timer_start(&cron_timer);
 
-    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
-    nw_timer_start(&test_cron_timer);
+//    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
+//    nw_timer_start(&test_cron_timer);
 
 
     log_vip("server start");
