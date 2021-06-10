@@ -28,7 +28,9 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     json_object_set_new(message, "curtime", json_integer(1622787234));
     json_object_set_new(message, "hash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
     json_object_set_new(message, "prevhash", json_string("0000000000000000000000000000000000000000000000000000000000000000"));
+    json_object_set_new(message, "bits", json_string("0xF7777777u"));
     json_object_set_new(message, "magic", json_string(MAGIC_NUMBER));
+
 
     char *message_data = json_dumps(message, 0);
     if (message_data == NULL) {
@@ -40,6 +42,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
 
     auto buf_size =     strlen(message_data);
+    message_data[message_size] = "\n";
 
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
@@ -164,8 +167,8 @@ int main(int argc, char *argv[]) {
     nw_timer_set(&cron_timer, 0.1, true, on_cron_check, NULL);
     nw_timer_start(&cron_timer);
 
-//    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
-//    nw_timer_start(&test_cron_timer);
+    nw_timer_set(&test_cron_timer, 30, true, test_on_cron_check, NULL);
+    nw_timer_start(&test_cron_timer);
 
 
     log_vip("server start");
