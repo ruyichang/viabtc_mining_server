@@ -19,7 +19,7 @@ static int sockfd;
 
 static void test_on_cron_check(nw_timer *timer, void *data) {
 
-    uint32_t magic_ = htole32(MAGIC_NUMBER);
+    uint32_t magic_ = FFFF;
 
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -48,18 +48,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     char msg_send_buf [4+2 + buf_size + 1]; //magic + len +data
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
 
-
-    char* p = msg_send_buf;
-
-    size_t left = 4 + 2 + buf_size +1;
-    pack_uint32_le(&p, &left, MAGIC_NUMBER);
-    log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
-
-    pack_uint32_le(&p, &left, buf_size);
-    log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
-
-    pack_varstr(&p, &left, message, buf_size);
-    log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
+    int ret = snprintf(msg_send_buf, 4 + 2 + buf_size + 1, "%x%x%s\n", magic_, buf_size, message_data);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
@@ -79,7 +68,6 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         log_error("------test_on_cron_check ret---------:%d", ret);
         close(sockfd);
     }
-    //    int ret = snprintf(msg_send_buf, 4+2 +buf_size +1, "%x%x%s\n", magic_, buf_size, message_data);
 }
 
 
