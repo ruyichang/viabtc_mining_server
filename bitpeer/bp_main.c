@@ -42,7 +42,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
 
     auto buf_size =     strlen(message_data);
-    message_data[message_size] = "\n";
+    message_data[buf_size] = "\n";
 
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
