@@ -29,10 +29,8 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     json_t *message = json_object();
     json_object_set_new(message, "height", json_integer(123123));
     json_object_set_new(message, "curtime", json_integer(1622787234));
-    json_object_set_new(message, "hash",
-                        json_string("0000000000000000000000000000000000000000000000000000000000000000"));
-    json_object_set_new(message, "prevhash",
-                        json_string("0000000000000000000000000000000000000000000000000000000000000000"));
+    json_object_set_new(message, "hash",json_string("0000000000000000000000000000000000000000000000000000000000000000"));
+    json_object_set_new(message, "prevhash",json_string("0000000000000000000000000000000000000000000000000000000000000000"));
     json_object_set_new(message, "bits", json_string("0xF7777777u"));
 
 
@@ -42,14 +40,17 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         json_decref(message);
         return -__LINE__;
     }
-    auto buf_size = strlen(message_data);
+    log_debug("block json msg: %s", message_data);
 
+    auto buf_size = strlen(message_data);
     log_error("------test_on_cron_check--1--");
-    char *msg_send_buf = malloc(sizeof (magic_) + 2 + buf_size); //magic + len +data
+    char *msg_send_buf = malloc(sizeof (magic_) + 2 + buf_size + 1); //magic + len +data
     log_error("------test_on_cron_check--2--");
 
-    memset(msg_send_buf, 0, sizeof (magic_) + 2 + buf_size);
+    memset(msg_send_buf, 0, sizeof (magic_) + 2 + buf_size +1);
     int ret = sprintf(msg_send_buf,"%ld%02d%s\r\n", magic_, buf_size, message_data);
+
+    log_error("------test_on_cron_check--3--");
 
     log_debug("block notify msg: %s", msg_send_buf);
 
