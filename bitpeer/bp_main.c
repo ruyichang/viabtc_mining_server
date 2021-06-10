@@ -45,19 +45,19 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     auto buf_size = strlen(message_data);
 
     log_error("------test_on_cron_check--1--");
-    char *msg_send_buf = malloc(4 + 2 + buf_size); //magic + len +data
+    char *msg_send_buf = malloc(sizeof (magic_) + 2 + buf_size); //magic + len +data
     log_error("------test_on_cron_check--2--");
 
-    memset(msg_send_buf, 0, 4 + 2 + buf_size);
+    memset(msg_send_buf, 0, sizeof (magic_) + 2 + buf_size);
     log_error("------test_on_cron_check--3--");
 
-    memcpy(msg_send_buf, magic_, 4);
+    memcpy(msg_send_buf, magic_, sizeof (magic_));
     log_error("------test_on_cron_check--4--");
 
-    memcpy(msg_send_buf + 4, buf_size, 2);
+    memcpy(msg_send_buf + sizeof (magic_), buf_size, 2);
     log_error("------test_on_cron_check--5--");
 
-    memcpy(msg_send_buf + 6, message_data, buf_size);
+    memcpy(msg_send_buf + sizeof (magic_)+2, message_data, buf_size);
     log_error("------test_on_cron_check--6--");
 
 
