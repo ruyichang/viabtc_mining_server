@@ -19,7 +19,7 @@ static int sockfd;
 
 static void test_on_cron_check(nw_timer *timer, void *data) {
 
-    uint32_t magic_ = FFFF;
+    uint32_t magic_ = 0xFFFFu;
 
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
