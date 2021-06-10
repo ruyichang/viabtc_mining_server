@@ -47,8 +47,10 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     char *msg_send_buf = malloc(sizeof (magic_) + 2 + buf_size + 1); //magic + len +data
     log_error("------test_on_cron_check--2--");
 
+    log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
+
     memset(msg_send_buf, 0, sizeof (magic_) + 2 + buf_size +1);
-    int ret = sprintf(msg_send_buf,"%ld%02d%s\r\n", magic_, buf_size, message_data);
+    int ret = snprintf(msg_send_buf, sizeof(msg_send_buf) ,"%ld%02d%s\r\n", magic_, buf_size, message_data);
 
     log_error("------test_on_cron_check--3--");
 
