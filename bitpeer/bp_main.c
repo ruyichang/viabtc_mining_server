@@ -44,7 +44,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     auto buf_size = strlen(message_data);
 
     char *msg_send_buf = malloc(4 + 2 + buf_size); //magic + len +data
-    memset(msg_send_buf, 0);
+    memset(msg_send_buf, 0, 4 + 2 + buf_size);
     memcpy(msg_send_buf, MAGIC_NUMBER, 4);
     memcpy(msg_send_buf + 4, buf_size, 2);
     memcpy(msg_send_buf + 6, message_data, buf_size);
