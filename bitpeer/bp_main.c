@@ -39,7 +39,6 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         json_decref(message);
         return -__LINE__;
     }
-    log_debug("block notify msg: %s", message_data);
 
     auto buf_size = strlen(message_data);
 
@@ -49,6 +48,8 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     memcpy(msg_send_buf + 4, buf_size, 2);
     memcpy(msg_send_buf + 6, message_data, buf_size);
 
+
+    log_debug("block notify msg: %s", msg_send_buf);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
         struct sockaddr_in *addr = &settings.jobmaster->arr[i];
@@ -68,8 +69,6 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         log_error("------test_on_cron_check ret---------:%d", ret);
         close(sockfd);
     }
-
-    log_error("------test_on_cron_check----sendto---end--");
 }
 
 
