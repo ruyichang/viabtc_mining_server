@@ -19,8 +19,8 @@ static int sockfd;
 
 static void test_on_cron_check(nw_timer *timer, void *data) {
 
-//    uint32_t magic_ = 4133906022;
-    uint32_t magic_ = 0xF6666666u;
+    uint32_t magic_ = le32toh(MAGIC_NUMBER);
+
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
     log_error("------test_on_cron_check----sendto---begin--");
@@ -45,11 +45,11 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     auto buf_size = strlen(message_data);
     log_error("------test_on_cron_check--1--");
 
-    char *msg_send_buf = malloc(13 + buf_size + 1); //magic + len +data
+    char *msg_send_buf = malloc(4+2 + buf_size + 1); //magic + len +data
     log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
 
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
-    int ret = snprintf(msg_send_buf, 14 +buf_size, "%ld%02u%s\n", magic_, buf_size, message_data);
+    int ret = snprintf(msg_send_buf, 4+2 +buf_size +1, "%x%x%s\n", magic_, buf_size, message_data);
 
     log_error("------test_on_cron_check--3--");
 
@@ -64,7 +64,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         snprintf(str, sizeof(str), "%s:%u", ip, ntohs(addr->sin_port));
         log_error("--send to--:%s", str);
 
-        int ret = sendto(sockfd, msg_send_buf, 14 +buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
+        int ret = sendto(sockfd, msg_send_buf, 4+2 +buf_size, 0, (struct sockaddr *) addr, sizeof(*addr));
         if (ret < 0) {
             char errmsg[100];
             snprintf(errmsg, sizeof(errmsg), "sendto error: %s", strerror(errno));
