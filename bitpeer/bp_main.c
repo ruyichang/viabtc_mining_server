@@ -46,12 +46,10 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     log_error("------test_on_cron_check--1--");
 
     char msg_send_buf [4+2 + buf_size + 1]; //magic + len +data
-    char* p = msg_send_buf;
-    log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
-
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
-//    int ret = snprintf(msg_send_buf, 4+2 +buf_size +1, "%x%x%s\n", magic_, buf_size, message_data);
 
+
+    char* p = msg_send_buf;
 
     size_t left = 4 + 2 + buf_size +1;
     pack_uint32_le(&p, &left, MAGIC_NUMBER);
@@ -81,6 +79,7 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
         log_error("------test_on_cron_check ret---------:%d", ret);
         close(sockfd);
     }
+    //    int ret = snprintf(msg_send_buf, 4+2 +buf_size +1, "%x%x%s\n", magic_, buf_size, message_data);
 }
 
 
