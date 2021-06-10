@@ -288,7 +288,7 @@ static int send_block_nitify(sds hash, sds pre_hash, sds bits, int height, uint3
     auto message_size = strlen(message_data);
     log_debug("settings.jobmaster->count:%ld", settings.jobmaster->count);
 
-    message_data[message_size] = "\n":
+    message_data[message_size] = "\n";
     log_debug("----------------block notify msg: %s", message_data);
 
     for (int sendtime = 0; sendtime < UDP_TIMES; sendtime++) {
