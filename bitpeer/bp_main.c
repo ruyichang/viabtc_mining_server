@@ -45,7 +45,8 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     auto buf_size = strlen(message_data);
     log_error("------test_on_cron_check--1--");
 
-    char *msg_send_buf = malloc(4+2 + buf_size + 1); //magic + len +data
+    char msg_send_buf [4+2 + buf_size + 1]; //magic + len +data
+    char* p = msg_send_buf;
     log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
 
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
@@ -53,13 +54,13 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
 
 
     size_t left = 4 + 2 + buf_size +1;
-    pack_uint32_le(&msg_send_buf, &left, MAGIC_NUMBER);
+    pack_uint32_le(&p, &left, MAGIC_NUMBER);
     log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
 
-    pack_uint32_le(&msg_send_buf, &left, buf_size);
+    pack_uint32_le(&p, &left, buf_size);
     log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
 
-    pack_varstr(&msg_send_buf, &left, message, buf_size);
+    pack_varstr(&p, &left, message, buf_size);
     log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
