@@ -19,7 +19,7 @@ static int sockfd;
 
 static void test_on_cron_check(nw_timer *timer, void *data) {
 
-    uint32_t magic_ = le32toh(MAGIC_NUMBER);
+    uint32_t magic_ = htole32(MAGIC_NUMBER);
 
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
