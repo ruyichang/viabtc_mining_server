@@ -49,10 +49,13 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
 
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
-    int ret = snprintf(msg_send_buf, 4+2 +buf_size +1, "%x%x%s\n", magic_, buf_size, message_data);
+//    int ret = snprintf(msg_send_buf, 4+2 +buf_size +1, "%x%x%s\n", magic_, buf_size, message_data);
 
-    log_error("------test_on_cron_check--3--");
 
+    size_t left = 4 + 2 + buf_size +1;
+    pack_uint32_le(&msg_send_buf, &left, MAGIC_NUMBER);
+    pack_uint32_le(&msg_send_buf, &left, buf_size);
+    pack_varstr(&msg_send_buf, &left, message, buf_size);
     log_debug("@@@@@@@@@@@@@@block notify msg: %s", msg_send_buf);
 
     for (size_t i = 0; i < settings.jobmaster->count; ++i) {
