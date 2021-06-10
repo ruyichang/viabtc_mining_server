@@ -274,7 +274,6 @@ static int send_block_nitify(sds hash, sds pre_hash, sds bits, int height, uint3
 //    json_object_set_new(message, "prevhash", json_string(previous_has));
     json_object_set_new(message, "prevhash", json_string(pre_hash));
     json_object_set_new(message, "bits", json_string(bits));
-    json_object_set_new(message, "magic", json_string(MAGIC_NUMBER));
 
     sdsfree(previous_has);
 
