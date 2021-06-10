@@ -45,11 +45,11 @@ static void test_on_cron_check(nw_timer *timer, void *data) {
     auto buf_size = strlen(message_data);
     log_error("------test_on_cron_check--1--");
 
-    char *msg_send_buf = malloc(4 + 2 + buf_size + 1); //magic + len +data
+    char *msg_send_buf = malloc(13 buf_size + 1); //magic + len +data
     log_debug("======sizeof (magic_):%d, buf_size:%d", sizeof(magic_), buf_size);
 
     memset(msg_send_buf, 0, 4 + 2 + buf_size +1);
-    int ret = snprintf(msg_send_buf, 4 + 2 + buf_size +1,"%ld%02u%s\n", magic_, buf_size, message_data);
+    int ret = snprintf(msg_send_buf, 14 +buf_size, "%ld%02u%s\n", magic_, buf_size, message_data);
 
     log_error("------test_on_cron_check--3--");
 
