@@ -42,5 +42,6 @@
     "start_string": "f9beb4d9",
     "jobmaster_update_interval": 30,
     "jobmaster_url": "bitpeer.blockin.net",
+    "friend_pools_url": "bitpeer-friend.blockin.net/test",
     "request_auth": "xxxxxxxxxxxxx"
 }

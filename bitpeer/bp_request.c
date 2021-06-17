@@ -177,10 +177,30 @@ int init_jobmaster_config(void)
     return 0;
 }
 
+int init_friend_pools_config(void)
+{
+    json_t *data = http_request(settings.friend_pools_url, 5.0);
+    printf("init_friend_pools_config  --1");
+    if (data == NULL)
+        return -__LINE__;
+    if (settings.friend_pools_cfg)
+        json_decref(settings.friend_pools_cfg);
+    settings.friend_pools_cfg = data;
+    return 0;
+}
+
 int update_jobmaster_config(request_callback callback)
 {
     struct request_context *req = malloc(sizeof(struct request_context));
     req->url        = settings.jobmaster_url;
+    req->callback   = callback;
+    return nw_job_add(job, 0, req);
+}
+
+int update_friend_pools_config(request_callback callback)
+{
+    struct request_context *req = malloc(sizeof(struct request_context));
+    req->url        = settings.friend_pools_url;
     req->callback   = callback;
     return nw_job_add(job, 0, req);
 }

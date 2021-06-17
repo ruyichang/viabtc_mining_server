@@ -46,7 +46,9 @@ struct settings {
 
     char                *request_auth;
     char                *jobmaster_url;
+    char                *friend_pools_url;
     json_t              *jobmaster_cfg;
+    json_t              *friend_pools_cfg;
     inetv4_list         *jobmaster;
     int                 jobmaster_update_interval;
     http_svr_cfg        http_svr;

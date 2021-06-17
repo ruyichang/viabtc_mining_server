@@ -45,6 +45,21 @@ static int load_cfg_jobmaster(json_t *root, const char *key) {
     return 0;
 }
 
+static int load_cfg_friend_pools(json_t *root, const char *key) {
+    int ret = read_cfg_str(root, key, &settings.friend_pools_url, NULL);
+    if (ret < 0) {
+        printf("[load_cfg_friend_pools]load cfg friend_pools_url fail.\n");
+        return -__LINE__;
+    }
+
+    ret = init_friend_pools_config();
+    if (ret < 0) {
+        return -__LINE__;
+    }
+
+    return 0;
+}
+
 int do_load_config(json_t *root) {
     int ret;
     ret = load_cfg_process(root, "process", &settings.process);
@@ -83,20 +98,15 @@ int do_load_config(json_t *root) {
         return -__LINE__;
     }
 
-    printf("----------- request_auth: %s\n", settings.request_auth);
-    //------------------------------------------------
-//    load jobmaster directly from cfg file
-//    settings.jobmaster_cfg = json_object_get(root, "jobmaster");
-//
-//    char *str = json_dumps(settings.jobmaster_cfg, 0);
-//    printf("-----------load cfg jobmaster successful, jobmaster_cfg: %s\n", str);
-//    free(str);
-
-    //------------------------------------------------
-
     ret = load_cfg_jobmaster(root, "jobmaster_url");
     if (ret < 0) {
         printf("load cfg jobmaster fail: %d\n", ret);
+        return -__LINE__;
+    }
+
+    ret = load_cfg_friend_pools(root, "friend_pools_url");
+    if (ret < 0) {
+        printf("load cfg friend_pools fail: %d\n", ret);
         return -__LINE__;
     }
 

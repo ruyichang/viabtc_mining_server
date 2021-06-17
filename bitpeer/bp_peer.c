@@ -16,6 +16,7 @@ static double diff_current;
 static nw_timer diff_timer;
 static nw_timer height_timer;
 static nw_timer jobmaster_update_timer;
+static nw_timer friend_pools_update_timer;
 static nw_timer broadcast_timer;
 static dict_t *peer_dict;
 static dict_t *block_dict;
@@ -735,6 +736,77 @@ int update_peer(void) {
         return -__LINE__;
     }
 
+    // load peers of friends
+    if (friend_pools_cfg != NULL && json_array_size(friend_pools_cfg) >0)
+    {
+        for (int i = 0; i < json_array_size(friend_pools_cfg); ++i) {
+            json_t *row = json_array_get(peers, i);
+            if (!json_is_string(row)) {
+                json_decref(root);
+                return -__LINE__;
+            }
+
+            sds key = sdsnew(json_string_value(row));
+            dict_entry *entry = dict_find(peer_dict, key);
+            if (entry) {
+                struct peer_info *info = entry->val;
+                info->update_time = now;
+                log_debug("peer: %s exist", key);
+                sdsfree(key);
+                continue;
+            }
+            sdsfree(key);
+
+            log_debug("add peer: %s", json_string_value(row));
+            nw_clt_cfg cfg;
+            memset(&cfg, 0, sizeof(cfg));
+            sds sock_cfg = sdsempty();
+            sock_cfg = sdscatprintf(sock_cfg, "tcp@%s", json_string_value(row));
+            if (nw_sock_cfg_parse(sock_cfg, &cfg.addr, &cfg.sock_type) < 0) {
+                log_error("add peer: %s fail", json_string_value(row));
+                sdsfree(sock_cfg);
+                json_decref(root);
+                return -__LINE__;
+            }
+            sdsfree(sock_cfg);
+            cfg.buf_pool = clt_buf_pool;
+            cfg.max_pkg_size = max_pkg_size;
+            cfg.reconnect_timeout = settings.reconnect_timeout;
+
+            nw_clt_type type;
+            memset(&type, 0, sizeof(type));
+            type.decode_pkg = decode_pkg;
+            type.on_close = on_close;
+            type.on_connect = on_connect;
+            type.on_recv_pkg = on_recv_pkg;
+            type.on_error_msg = on_error_msg;
+
+            struct peer_info *info = malloc(sizeof(struct peer_info));
+            memset(info, 0, sizeof(struct peer_info));
+            info->update_time = now;
+            info->clt = nw_clt_create(&cfg, &type, info);
+            if (info->clt == NULL) {
+                log_error("add peer: %s fail", json_string_value(row));
+                free(info);
+                json_decref(root);
+                return -__LINE__;
+            }
+            if (nw_clt_start(info->clt) < 0) {
+                log_error("add peer: %s fail", json_string_value(row));
+                free(info);
+                json_decref(root);
+                return -__LINE__;
+            }
+            if (dict_add(peer_dict, sdsnew(json_string_value(row)), info) < 0) {
+                log_error("add peer: %s fail", json_string_value(row));
+                free(info);
+                json_decref(root);
+                return -__LINE__;
+            }
+        }
+    }
+
+
     for (int i = 0; i < json_array_size(peers); ++i) {
         json_t *row = json_array_get(peers, i);
         if (!json_is_string(row)) {
@@ -893,8 +965,30 @@ static int on_jobmaster_callback(json_t *reply) {
     return 0;
 }
 
+static int on_friend_pools_callback(json_t *reply) {
+    if (!reply) {
+        log_fatal("get friend_pools config null");
+        return -__LINE__;
+    }
+
+    char *str_new = json_dumps(reply, 0);
+    char *str_old = json_dumps(settings.friend_pools_cfg, 0);
+    log_info("new friend_pools config: %s, old friend_pools config: %s", str_new, str_old);
+    free(str_new);
+    free(str_old);
+
+    json_decref(settings.friend_pools_cfg);
+    settings.friend_pools_cfg = reply;
+
+    return 0;
+}
+
 static void on_jobmaster_update(nw_timer *timer, void *privdata) {
     update_jobmaster_config(on_jobmaster_callback);
+}
+
+static void on_friend_pools_update(nw_timer *timer, void *privdata) {
+    update_friend_pools_config(on_jobmaster_callback);
 }
 
 int init_peer(void) {
@@ -935,6 +1029,9 @@ int init_peer(void) {
 
     nw_timer_set(&jobmaster_update_timer, settings.jobmaster_update_interval, true, on_jobmaster_update, NULL);
     nw_timer_start(&jobmaster_update_timer);
+
+    nw_timer_set(&friend_pools_update_timer, settings.jobmaster_update_interval, true, on_friend_pools_update, NULL);
+    nw_timer_start(&friend_pools_update_timer);
 
     return 0;
 }
