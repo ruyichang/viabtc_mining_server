@@ -737,9 +737,9 @@ int update_peer(void) {
     }
 
     // load peers of friends
-    if (friend_pools_cfg != NULL && json_array_size(friend_pools_cfg) >0)
+    if (settings.friend_pools_cfg != NULL && json_array_size(settings.friend_pools_cfg) >0)
     {
-        for (int i = 0; i < json_array_size(friend_pools_cfg); ++i) {
+        for (int i = 0; i < json_array_size(settings.friend_pools_cfg); ++i) {
             json_t *row = json_array_get(peers, i);
             if (!json_is_string(row)) {
                 json_decref(root);
