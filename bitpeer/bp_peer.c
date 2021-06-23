@@ -1132,6 +1132,18 @@ static int broadcast_header_with_limit(void *block, size_t block_size, int limit
     return 0;
 }
 
+//字段尺寸	描述	数据类型	说明
+//4	version	uint32_t	block版本信息，基于生成block的软件版本
+//32	prev_block	char[32]	这一block引用的前一block之散列
+//32	merkle_root	char[32]	与这一block相关的全部交易之散列(Merkle树)
+//4	timestamp	uint32_t	记录block创建时间的时间戳
+//4	bits	uint32_t	这一block的计算难度
+//4	nonce	uint32_t	用于生成这一block的nonce值
+//?	txn_count	var_int	交易数量
+//?	txns	tx[]	交易，以tx格式存储
+
+//header 80
+
 int broadcast_header(void *block, size_t block_size) {
     static char last_block_hash[32];
     char hash[32];
