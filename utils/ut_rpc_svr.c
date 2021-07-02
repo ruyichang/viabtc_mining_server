@@ -80,6 +80,8 @@ static int on_heartbeat(nw_ses *ses, rpc_pkg *pkg)
 
 static void on_recv_pkg(nw_ses *ses, void *data, size_t size)
 {
+    log_error("-------------------------peer: %s, received data: %s", nw_sock_human_addr(&ses->peer_addr), data);
+
     struct rpc_pkg pkg;
     memcpy(&pkg, data, RPC_PKG_HEAD_SIZE);
     pkg.ext = data + RPC_PKG_HEAD_SIZE;
