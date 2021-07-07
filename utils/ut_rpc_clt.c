@@ -13,6 +13,7 @@
 
 static void on_recv_pkg(nw_ses *ses, void *data, size_t size)
 {
+    log_error("--------------on_recv_pkg-----------peer: %s,size:%d received data: %s", nw_sock_human_addr(&ses->peer_addr), size, data);
     struct rpc_pkg pkg;
     memcpy(&pkg, data, RPC_PKG_HEAD_SIZE);
     pkg.ext = data + RPC_PKG_HEAD_SIZE;

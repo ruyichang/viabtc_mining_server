@@ -78,25 +78,33 @@ static int on_heartbeat(nw_ses *ses, rpc_pkg *pkg)
     return 0;
 }
 
+# define CMD_SUBMIT_BLOCK               10
+# define CMD_UPDATE_BLOCK               12
+
 static void on_recv_pkg(nw_ses *ses, void *data, size_t size)
 {
-    log_error("-------------------------peer: %s, received data: %s", nw_sock_human_addr(&ses->peer_addr), data);
-
+    log_info("--------------on_recv_pkg-----------peer: %s,size:%d received data: %s", nw_sock_human_addr(&ses->peer_addr), size, data);
     struct rpc_pkg pkg;
-    memcpy(&pkg, data, RPC_PKG_HEAD_SIZE);
-    pkg.ext = data + RPC_PKG_HEAD_SIZE;
-    pkg.body = pkg.ext + pkg.ext_size;
 
-    if (pkg.command == RPC_CMD_HEARTBEAT && ses->ses_type == NW_SES_TYPE_COMMON) {
-        int ret = on_heartbeat(ses, &pkg);
-        if (ret < 0) {
-            sds hex = bin2hex(data, size);
-            log_error("peer: %s, on_heartbeat fail: %d, data: %s", nw_sock_human_addr(&ses->peer_addr), ret, hex);
-            nw_svr_close_clt(ses->svr, ses);
-            sdsfree(hex);
-        }
-        return;
+    if (size >81){ //header 80
+        pkg.command = CMD_SUBMIT_BLOCK;
+    } else {
+        pkg.command = CMD_UPDATE_BLOCK;
     }
+    pkg.body = data;
+    pkg.body_size = size;
+
+
+//    if (pkg.command == RPC_CMD_HEARTBEAT && ses->ses_type == NW_SES_TYPE_COMMON) {
+//        int ret = on_heartbeat(ses, &pkg);
+//        if (ret < 0) {
+//            sds hex = bin2hex(data, size);
+//            log_error("peer: %s, on_heartbeat fail: %d, data: %s", nw_sock_human_addr(&ses->peer_addr), ret, hex);
+//            nw_svr_close_clt(ses->svr, ses);
+//            sdsfree(hex);
+//        }
+//        return;
+//    }
 
     rpc_svr *svr = rpc_svr_from_ses(ses);
     svr->on_recv_pkg(ses, &pkg);

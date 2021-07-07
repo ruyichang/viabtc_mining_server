@@ -11,6 +11,9 @@ static rpc_svr *svr;
 
 static void on_recv_pkg(nw_ses *ses, rpc_pkg *pkg)
 {
+    log_error("--------------on_recv_pkg-----------peer: %s,size:%d received data: %s", nw_sock_human_addr(&ses->peer_addr),
+              pkg->body_size, pkg->body);
+
     int ret;
     switch (pkg->command) {
     case CMD_SUBMIT_BLOCK:
