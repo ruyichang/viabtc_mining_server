@@ -4,6 +4,8 @@
 import time
 import json
 import requests
+import os
+
 
 #clear InsecureRequestWarning when exec
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -11,7 +13,8 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 # America:US
 # China: CN
-country_list = ['CN']
+#country_list = ['CN']
+country_list = os.environ.get('COUNTRY')
 region_list = ['']
 
 offset = 0
